@@ -11,25 +11,59 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-    body { background-color: #070B14; color: #F0F4FF; font-family: 'Noto Sans KR', sans-serif; word-break: keep-all; overflow-wrap: break-word; }
 
+    /* ─── Deep navy palette ─── */
+    :root {
+      --bg:       #05091C;
+      --bg-card:  #080F22;
+      --bg-card2: #060D1E;
+      --border:   #14244A;
+      --border-hi:#2A3F72;
+      --indigo:   #6366F1;
+      --indigo-l: #818CF8;
+      --indigo-d: #4338CA;
+      --violet:   #7C3AED;
+      --accent:   #A5B4FC;
+      --amber:    #F59E0B;
+    }
+
+    body {
+      background-color: var(--bg);
+      /* subtle dot grid for depth */
+      background-image: radial-gradient(circle, rgba(99,102,241,.07) 1px, transparent 1px);
+      background-size: 28px 28px;
+      color: #E8EDFF;
+      font-family: 'Noto Sans KR', sans-serif;
+      word-break: keep-all; overflow-wrap: break-word;
+    }
+
+    /* Gradient text — indigo-violet (premium) */
     .gradient-text {
-      background: linear-gradient(135deg, #38BDF8 0%, #3B82F6 50%, #6366F1 100%);
+      background: linear-gradient(135deg, #818CF8 0%, #6366F1 50%, #7C3AED 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
-    .gradient-bg { background: linear-gradient(135deg, #2563EB, #3B82F6, #38BDF8); }
+    .gradient-bg { background: linear-gradient(135deg, #4338CA, #6366F1, #818CF8); }
 
-    .card { background: #0D1526; border: 1px solid #1E2D4A; transition: border-color .3s, box-shadow .3s; }
-    .card:hover { border-color: #3B82F6; box-shadow: 0 0 28px rgba(59,130,246,.15); }
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      transition: border-color .3s, box-shadow .3s;
+    }
+    .card:hover {
+      border-color: var(--indigo);
+      box-shadow: 0 0 28px rgba(99,102,241,.13);
+    }
 
+    /* Primary button — indigo */
     .btn-primary {
-      background: linear-gradient(135deg, #2563EB, #3B82F6, #38BDF8);
+      background: linear-gradient(135deg, var(--indigo-d), var(--indigo), var(--indigo-l));
       color: white; font-weight: 700; border: none; cursor: pointer;
       transition: transform .15s, box-shadow .15s, filter .15s;
-      box-shadow: 0 4px 20px rgba(59,130,246,.45);
+      box-shadow: 0 4px 20px rgba(99,102,241,.4);
     }
-    .btn-primary:hover  { transform: translateY(-2px) scale(1.02); box-shadow: 0 8px 32px rgba(59,130,246,.6); filter: brightness(1.1); }
-    .btn-primary:focus  { outline: none; box-shadow: 0 0 0 3px rgba(59,130,246,.5); }
+    .btn-primary:hover  { transform: translateY(-2px) scale(1.02); box-shadow: 0 8px 32px rgba(99,102,241,.55); filter: brightness(1.1); }
+    .btn-primary:focus  { outline: none; box-shadow: 0 0 0 3px rgba(99,102,241,.45); }
     .btn-primary:active { transform: scale(.98); }
 
     .btn-kakao {
@@ -41,54 +75,85 @@
     .btn-kakao:focus  { outline: none; box-shadow: 0 0 0 3px rgba(254,229,0,.5); }
     .btn-kakao:active { transform: scale(.98); }
 
-    .badge     { background: rgba(59,130,246,.12); border: 1px solid rgba(59,130,246,.3); color: #60A5FA; }
-    .badge-sky { background: rgba(56,189,248,.1);  border: 1px solid rgba(56,189,248,.3); color: #38BDF8; }
+    /* Badges — amber for prestige labels, indigo for tags */
+    .badge     { background: rgba(99,102,241,.1); border: 1px solid rgba(99,102,241,.28); color: var(--accent); }
+    .badge-amber { background: rgba(245,158,11,.1); border: 1px solid rgba(245,158,11,.3); color: #FCD34D; font-weight: 700; }
 
-    .divider { height: 1px; background: linear-gradient(90deg, transparent, #1E2D4A, transparent); }
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border-hi), transparent); }
 
+    /* Hero glow — indigo tint */
     .hero-glow {
-      background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(59,130,246,.12) 0%, transparent 70%);
+      background: radial-gradient(ellipse 80% 55% at 50% 0%, rgba(99,102,241,.14) 0%, rgba(124,58,237,.06) 50%, transparent 75%);
       pointer-events: none;
     }
 
+    /* Check lists */
     .check-list li { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
-    .check-list li::before { content: '✓'; color: #3B82F6; font-weight: 900; flex-shrink: 0; margin-top: 1px; }
+    .check-list li::before { content: '✓'; color: var(--indigo-l); font-weight: 900; flex-shrink: 0; margin-top: 1px; }
 
-    .fade-in { opacity: 0; transform: translateY(20px); transition: opacity .6s, transform .6s; }
+    /* Fade-in */
+    .fade-in { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
     .fade-in.visible { opacity: 1; transform: translateY(0); }
 
+    /* Step circles — indigo-violet */
     .step-circle {
       width: 56px; height: 56px; border-radius: 50%;
-      background: linear-gradient(135deg, #2563EB, #38BDF8);
+      background: linear-gradient(135deg, var(--indigo-d), var(--violet));
       display: flex; align-items: center; justify-content: center;
       font-weight: 900; font-size: 1.25rem; color: white; flex-shrink: 0;
+      box-shadow: 0 0 20px rgba(99,102,241,.3);
     }
 
-    /* Package card */
+    /* Package cards */
     .pkg-card {
-      background: #0D1526; border-radius: 20px; padding: 28px;
-      border: 1px solid #1E2D4A; transition: border-color .3s, box-shadow .3s;
+      background: var(--bg-card); border-radius: 20px; padding: 28px;
+      border: 1px solid var(--border); transition: border-color .3s, box-shadow .3s;
     }
     .pkg-card.featured {
-      border-color: rgba(59,130,246,.5);
-      box-shadow: 0 0 40px rgba(59,130,246,.12);
-      background: linear-gradient(145deg, #0A1628, #0D1A35);
+      border-color: rgba(99,102,241,.5);
+      box-shadow: 0 0 48px rgba(99,102,241,.14);
+      background: linear-gradient(145deg, #080F24, #0C1432);
     }
 
-    /* Silver button badge */
+    /* Review result tag */
+    .result-tag {
+      background: rgba(99,102,241,.1); border: 1px solid rgba(99,102,241,.22);
+      color: var(--indigo-l); font-size: 11px; font-weight: 700;
+      padding: 3px 9px; border-radius: 20px; white-space: nowrap;
+    }
+
+    /* Silver badge */
     .silver-badge {
       background: linear-gradient(135deg, #C0C0C0, #E8E8E8);
       color: #1a1a1a; font-weight: 800; font-size: 11px;
       padding: 3px 10px; border-radius: 20px; display: inline-block;
     }
 
+    /* Stat card — glassy with top accent line */
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--indigo);
+      border-radius: 16px; padding: 20px;
+      text-align: center;
+    }
+
     /* About section */
     .about-card {
-      background: #0D1526; border: 1px solid #1E2D4A;
+      background: var(--bg-card); border: 1px solid var(--border);
       border-radius: 24px; padding: 32px;
     }
     .about-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
-    .about-item::before { content: '✓'; color: #3B82F6; font-weight: 900; flex-shrink: 0; margin-top: 2px; }
+    .about-item::before { content: '✓'; color: var(--indigo-l); font-weight: 900; flex-shrink: 0; margin-top: 2px; }
+
+    /* Section label style */
+    .section-label {
+      display: table; margin: 0 auto 16px;
+      font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--amber); border: 1px solid rgba(245,158,11,.25);
+      background: rgba(245,158,11,.08);
+      border-radius: 20px; padding: 4px 14px;
+    }
 
     /* Video marquee */
     .video-marquee-wrap { display: flex; gap: 16px; animation: marquee 32s linear infinite; width: max-content; }
@@ -96,10 +161,10 @@
     @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
     .video-thumb {
       width: 280px; height: 158px; border-radius: 14px; overflow: hidden;
-      flex-shrink: 0; border: 1px solid #1E2D4A;
+      flex-shrink: 0; border: 1px solid var(--border);
       transition: border-color .3s, box-shadow .3s, transform .3s;
     }
-    .video-thumb:hover { border-color: #3B82F6; box-shadow: 0 0 24px rgba(59,130,246,.3); transform: scale(1.03); }
+    .video-thumb:hover { border-color: var(--indigo); box-shadow: 0 0 24px rgba(99,102,241,.3); transform: scale(1.03); }
     .video-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
     /* FAQ */
@@ -131,7 +196,7 @@
 <!-- ══════════════════════════════════════
      HEADER
 ══════════════════════════════════════ -->
-<header class="sticky top-0 z-40 backdrop-blur-sm border-b border-white/5" style="background:rgba(7,11,20,0.92);">
+<header class="sticky top-0 z-40 backdrop-blur-sm border-b border-white/5" style="background:rgba(5,9,28,0.95);">
   <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
     <div class="flex items-center gap-4">
       <a href="index.html" class="text-lg sm:text-xl font-black tracking-tight gradient-text shrink-0">HighFreedom</a>
@@ -139,7 +204,7 @@
         <a href="https://freedomclass.liveklass.com/cu/2NUMaWYc" target="_blank" rel="noopener"
            class="text-xs sm:text-sm font-semibold text-white/40 hover:text-white transition-colors">클래스</a>
         <a href="index.html" class="text-xs sm:text-sm font-semibold text-white/40 hover:text-white transition-colors">유뿌챌</a>
-        <span class="text-blue-400 text-xs sm:text-sm font-bold border-b-2 border-blue-400 pb-0.5 whitespace-nowrap">채널 대행</span>
+        <span style="color:#818CF8;border-bottom:2px solid #818CF8;" class="text-xs sm:text-sm font-bold pb-0.5 whitespace-nowrap">채널 대행</span>
       </nav>
     </div>
     <a href="#consult">
@@ -155,14 +220,14 @@
   <div class="hero-glow absolute inset-0"></div>
   <div class="max-w-3xl mx-auto text-center relative">
     <div class="inline-flex items-center gap-2 badge rounded-full px-4 py-1.5 text-sm font-semibold mb-6">
-      <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+      <span class="w-2 h-2 rounded-full animate-pulse" style="background:#818CF8;"></span>
       유튜브 실버버튼 채널 직접 운영
     </div>
     <h1 class="font-black mb-6">
       <div class="text-3xl sm:text-5xl text-white mb-3">유튜브 채널 운영,</div>
       <div class="text-3xl sm:text-5xl gradient-text">처음부터 끝까지 맡기세요.</div>
     </h1>
-    <p class="text-base sm:text-lg text-blue-100/70 leading-relaxed mb-8 max-w-xl mx-auto">
+    <p class="text-base sm:text-lg leading-relaxed mb-8 max-w-xl mx-auto" style="color:rgba(180,190,255,0.7);">
       직접 36만+ 구독자 채널을 운영한 경험으로<br />
       여러분의 채널을 전문적으로 성장시켜 드립니다.
     </p>
@@ -185,29 +250,25 @@
 <section class="py-14 px-4 fade-in">
   <div class="max-w-4xl mx-auto">
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      <div class="card rounded-2xl p-5 text-center">
-        <div class="flex items-center justify-center gap-2 mb-1">
-          <p class="text-3xl font-black text-white">36만<span class="text-blue-400">+</span></p>
-        </div>
-        <p class="text-xs text-white/50">직접 운영 구독자</p>
-        <div class="mt-2 flex justify-center">
-          <span class="silver-badge">🏆 실버버튼</span>
-        </div>
+      <div class="stat-card">
+        <p class="text-3xl font-black text-white mb-1">36만<span style="color:#818CF8;">+</span></p>
+        <p class="text-xs text-white/50 mb-2">직접 운영 구독자</p>
+        <span class="silver-badge">🏆 실버버튼</span>
       </div>
-      <div class="card rounded-2xl p-5 text-center">
-        <p class="text-3xl font-black gradient-text mb-1">1만<span class="text-blue-300">+</span></p>
-        <p class="text-xs text-white/50">유튜브 교육 채널</p>
-        <p class="text-xs text-blue-400 mt-1 font-semibold">안녕자유</p>
+      <div class="stat-card">
+        <p class="text-3xl font-black gradient-text mb-1">1만<span class="text-base">+</span></p>
+        <p class="text-xs text-white/50 mb-2">유튜브 교육 채널</p>
+        <p class="text-xs font-semibold" style="color:#818CF8;">안녕자유</p>
       </div>
-      <div class="card rounded-2xl p-5 text-center">
-        <p class="text-3xl font-black text-white mb-1">5.6만<span class="text-blue-400">+</span></p>
-        <p class="text-xs text-white/50">인스타그램 팔로워</p>
-        <p class="text-xs text-white/30 mt-1">@english_sister_</p>
+      <div class="stat-card">
+        <p class="text-3xl font-black text-white mb-1">5.6만<span style="color:#818CF8;">+</span></p>
+        <p class="text-xs text-white/50 mb-2">인스타그램 팔로워</p>
+        <p class="text-xs text-white/30">@english_sister_</p>
       </div>
-      <div class="card rounded-2xl p-5 text-center">
+      <div class="stat-card">
         <p class="text-3xl font-black gradient-text mb-1">베스트<span class="text-base">셀러</span></p>
-        <p class="text-xs text-white/50">출간</p>
-        <p class="text-xs text-white/30 mt-1">짧은 영어패턴 100개의 힘</p>
+        <p class="text-xs text-white/50 mb-2">출간</p>
+        <p class="text-xs text-white/30">짧은 영어패턴 100개의 힘</p>
       </div>
     </div>
   </div>
@@ -220,7 +281,7 @@
 ══════════════════════════════════════ -->
 <section class="py-20 px-4 fade-in">
   <div class="max-w-3xl mx-auto">
-    <p class="text-center text-white/40 text-sm font-semibold uppercase tracking-widest mb-4">왜 혼자는 어려운가</p>
+    <p class="section-label">왜 혼자는 어려운가</p>
     <h2 class="text-2xl sm:text-4xl font-black text-center mb-3">
       유튜브 채널 운영,
     </h2>
@@ -230,19 +291,19 @@
     <div class="grid sm:grid-cols-3 gap-5">
       <div class="card rounded-2xl p-6">
         <div class="text-2xl mb-3">🤯</div>
-        <div class="badge-sky inline-block text-xs font-bold px-2 py-0.5 rounded-full mb-3">문제 01</div>
+        <div class="result-tag inline-block mb-3">문제 01</div>
         <h3 class="font-bold text-white text-lg mb-2">기획이 막막하다</h3>
         <p class="text-white/50 text-sm leading-relaxed">무슨 주제로 찍어야 할지, 어떤 제목이 뜨는지 감이 안 옵니다. 경쟁자는 많고 내 영상만 아무도 안 봅니다.</p>
       </div>
       <div class="card rounded-2xl p-6">
         <div class="text-2xl mb-3">⏰</div>
-        <div class="badge-sky inline-block text-xs font-bold px-2 py-0.5 rounded-full mb-3">문제 02</div>
+        <div class="result-tag inline-block mb-3">문제 02</div>
         <h3 class="font-bold text-white text-lg mb-2">시간이 없다</h3>
         <p class="text-white/50 text-sm leading-relaxed">기획, 촬영, 편집까지 영상 하나 제작하는데 20시간 가까이 걸립니다. 결국 업로드는 점점 뜸해지고 채널은 방치됩니다.</p>
       </div>
       <div class="card rounded-2xl p-6">
         <div class="text-2xl mb-3">📉</div>
-        <div class="badge-sky inline-block text-xs font-bold px-2 py-0.5 rounded-full mb-3">문제 03</div>
+        <div class="result-tag inline-block mb-3">문제 03</div>
         <h3 class="font-bold text-white text-lg mb-2">뭐가 문제인지 모른다</h3>
         <p class="text-white/50 text-sm leading-relaxed">업로드는 하는데 조회수가 안 나옵니다. 썸네일, 제목, 내용 중 뭐가 문제인지, 어떻게 개선해야 할지 알 수가 없습니다.</p>
       </div>
@@ -258,7 +319,7 @@
 ══════════════════════════════════════ -->
 <section id="packages" class="py-20 px-4 fade-in">
   <div class="max-w-4xl mx-auto">
-    <p class="text-center text-white/40 text-sm font-semibold uppercase tracking-widest mb-4">서비스 구성</p>
+    <p class="section-label">서비스 구성</p>
     <h2 class="text-2xl sm:text-4xl font-black text-center mb-3">2가지 패키지 중</h2>
     <h2 class="text-2xl sm:text-4xl font-black text-center mb-12"><span class="gradient-text">원하는 방식을 선택하세요</span></h2>
 
@@ -277,7 +338,7 @@
           기획부터 업로드까지 전 과정을 맡깁니다.<br />
           채널 성장에만 집중하고 싶은 분께.
         </p>
-        <ul class="check-list text-sm text-blue-100/70 mb-6">
+        <ul class="check-list text-sm mb-6" style="color:rgba(200,210,255,0.65);">
           <li>콘텐츠 기획 & 대본 작성</li>
           <li>전문 장비 촬영 대행</li>
           <li>유튜브 최적화 편집 & 썸네일</li>
@@ -303,7 +364,7 @@
           방향은 잡아드리고, 실행은 직접 하세요.<br />
           촬영·편집은 할 수 있는데 기획이 막막한 분께.
         </p>
-        <ul class="check-list text-sm text-blue-100/70 mb-6">
+        <ul class="check-list text-sm mb-6" style="color:rgba(200,210,255,0.65);">
           <li>채널 방향 & 콘텐츠 전략 수립</li>
           <li>주제 선정 & 키워드 분석</li>
           <li>영상별 상세 기획안 전달</li>
@@ -312,7 +373,7 @@
           <li>촬영·편집·업로드는 직접 진행</li>
         </ul>
         <a href="#consult">
-          <button class="w-full py-3.5 rounded-xl font-bold text-sm text-blue-400 border-2 border-blue-500 hover:bg-blue-500/10 transition-colors cursor-pointer" style="background:transparent;">상담 신청하기</button>
+          <button class="w-full py-3.5 rounded-xl font-bold text-sm transition-colors cursor-pointer" style="background:transparent;color:#818CF8;border:2px solid rgba(99,102,241,0.5);" onmouseover="this.style.background='rgba(99,102,241,0.1)'" onmouseout="this.style.background='transparent'">상담 신청하기</button>
         </a>
       </div>
 
@@ -328,7 +389,7 @@
 ══════════════════════════════════════ -->
 <section class="py-20 px-4 fade-in">
   <div class="max-w-4xl mx-auto">
-    <p class="text-center text-white/40 text-sm font-semibold uppercase tracking-widest mb-4">올인원 패키지 상세</p>
+    <p class="section-label">올인원 패키지 상세</p>
     <h2 class="text-2xl sm:text-4xl font-black text-center mb-12">
       <span class="gradient-text">4가지</span>를 전부 책임집니다
     </h2>
@@ -385,7 +446,7 @@
 ══════════════════════════════════════ -->
 <section class="py-20 px-4 fade-in">
   <div class="max-w-3xl mx-auto">
-    <p class="text-center text-white/40 text-sm font-semibold uppercase tracking-widest mb-4">진행 과정</p>
+    <p class="section-label">진행 과정</p>
     <h2 class="text-2xl sm:text-4xl font-black text-center mb-3">상담부터 운영까지</h2>
     <h2 class="text-2xl sm:text-4xl font-black text-center mb-12"><span class="gradient-text">딱 3단계</span>입니다</h2>
 
@@ -425,7 +486,7 @@
 ══════════════════════════════════════ -->
 <section class="py-20 px-4 fade-in">
   <div class="max-w-3xl mx-auto">
-    <p class="text-center text-white/40 text-sm font-semibold uppercase tracking-widest mb-4">운영자 소개</p>
+    <p class="section-label">운영자 소개</p>
     <h2 class="text-2xl sm:text-4xl font-black text-center mb-10">
       말이 아닌, <span class="gradient-text">결과로 증명합니다</span>
     </h2>
@@ -475,7 +536,7 @@
 ══════════════════════════════════════ -->
 <section class="py-20 fade-in overflow-hidden">
   <div class="max-w-6xl mx-auto px-4 mb-3">
-    <p class="text-center text-white/40 text-sm font-semibold uppercase tracking-widest mb-3">운영 채널</p>
+    <p class="section-label">운영 채널</p>
     <h2 class="text-2xl sm:text-4xl font-black text-center">
       말이 아닌, <span class="gradient-text">영상으로 증명합니다</span>
     </h2>
@@ -497,7 +558,7 @@
 ══════════════════════════════════════ -->
 <section class="py-20 px-4 fade-in">
   <div class="max-w-5xl mx-auto">
-    <p class="text-center text-white/40 text-sm font-semibold uppercase tracking-widest mb-4">고객 후기</p>
+    <p class="section-label">고객 후기</p>
     <h2 class="text-2xl sm:text-4xl font-black text-center mb-12">
       숫자가 <span class="gradient-text">거짓말하지 않습니다</span>
     </h2>
@@ -506,7 +567,7 @@
       <div class="card rounded-2xl p-6">
         <div class="flex items-center justify-between mb-3">
           <span class="text-yellow-400 text-sm">★★★★★</span>
-          <span class="text-xs text-blue-400 font-bold px-2 py-0.5 rounded-full" style="background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);">영상 노출 4배 증가</span>
+          <span class="result-tag">영상 노출 4배 증가</span>
         </div>
         <p class="text-white/70 text-sm leading-relaxed mb-4">"썸네일·제목만 바꿨는데 영상 노출이 폭발했습니다. 올릴 때마다 조회 그래프가 눈에 띄게 올라갑니다."</p>
         <p class="text-white/40 text-xs font-semibold">부동산 컨설턴트 · 대표님</p>
@@ -515,7 +576,7 @@
       <div class="card rounded-2xl p-6">
         <div class="flex items-center justify-between mb-3">
           <span class="text-yellow-400 text-sm">★★★★★</span>
-          <span class="text-xs text-blue-400 font-bold px-2 py-0.5 rounded-full" style="background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);">월 문의 +2배</span>
+          <span class="result-tag">월 문의 +2배</span>
         </div>
         <p class="text-white/70 text-sm leading-relaxed mb-4">"막막했던 홍보가 유튜브를 통해 체계화되며 한의원 신규 문의가 2배 이상 늘었습니다."</p>
         <p class="text-white/40 text-xs font-semibold">한의원 원장님</p>
@@ -524,7 +585,7 @@
       <div class="card rounded-2xl p-6">
         <div class="flex items-center justify-between mb-3">
           <span class="text-yellow-400 text-sm">★★★★★</span>
-          <span class="text-xs text-blue-400 font-bold px-2 py-0.5 rounded-full" style="background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);">전년 대비 매출 200%</span>
+          <span class="result-tag">전년 대비 매출 200%</span>
         </div>
         <p class="text-white/70 text-sm leading-relaxed mb-4">"적용 후 전년 동월 대비 매출이 200% 성장했습니다. 신규 원생이 줄을 서고 있습니다."</p>
         <p class="text-white/40 text-xs font-semibold">필라테스 스튜디오 원장님</p>
@@ -533,7 +594,7 @@
       <div class="card rounded-2xl p-6">
         <div class="flex items-center justify-between mb-3">
           <span class="text-yellow-400 text-sm">★★★★★</span>
-          <span class="text-xs text-blue-400 font-bold px-2 py-0.5 rounded-full" style="background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);">구독자 1만 돌파</span>
+          <span class="result-tag">구독자 1만 돌파</span>
         </div>
         <p class="text-white/70 text-sm leading-relaxed mb-4">"혼자 3년 동안 500명이었는데 대행 시작하고 6개월 만에 1만 명을 돌파했습니다. 믿기지 않아요."</p>
         <p class="text-white/40 text-xs font-semibold">요리 강사 · 쿠킹 크리에이터</p>
@@ -542,7 +603,7 @@
       <div class="card rounded-2xl p-6">
         <div class="flex items-center justify-between mb-3">
           <span class="text-yellow-400 text-sm">★★★★★</span>
-          <span class="text-xs text-blue-400 font-bold px-2 py-0.5 rounded-full" style="background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);">매출 40% 상승</span>
+          <span class="result-tag">매출 40% 상승</span>
         </div>
         <p class="text-white/70 text-sm leading-relaxed mb-4">"작년 대비 매출이 40% 상승했습니다. 이제는 걱정이 아니라 직원을 추가 고용할지 고민 중입니다."</p>
         <p class="text-white/40 text-xs font-semibold">레스토랑 오너 셰프</p>
@@ -551,7 +612,7 @@
       <div class="card rounded-2xl p-6">
         <div class="flex items-center justify-between mb-3">
           <span class="text-yellow-400 text-sm">★★★★★</span>
-          <span class="text-xs text-blue-400 font-bold px-2 py-0.5 rounded-full" style="background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);">문의 3배 증가</span>
+          <span class="result-tag">문의 3배 증가</span>
         </div>
         <p class="text-white/70 text-sm leading-relaxed mb-4">"콘텐츠 전략을 적용하니 상품 문의가 3배 증가했습니다. 단순 조회수가 아니라 매출로 이어지는 게 놀랍습니다."</p>
         <p class="text-white/40 text-xs font-semibold">IT 스타트업 대표님</p>
@@ -633,7 +694,7 @@
 <section id="consult" class="py-24 px-4 fade-in">
   <div class="max-w-xl mx-auto text-center">
     <div class="inline-flex items-center gap-2 badge rounded-full px-4 py-1.5 text-sm font-semibold mb-6">
-      <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+      <span class="w-2 h-2 rounded-full animate-pulse" style="background:#818CF8;"></span>
       지금 신청하면 무료 채널 진단 제공
     </div>
     <h2 class="text-2xl sm:text-4xl font-black mb-3">지금 무료 상담을</h2>
