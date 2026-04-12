@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>유뿌챌 — 유튜브 뿌시기 챌린지 | HighFreedom</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              blue:   '#3B82F6',
+              sky:    '#38BDF8',
+              indigo: '#6366F1',
+              dark:   '#070B14',
+              card:   '#0D1526',
+              border: '#1E2D4A',
+              muted:  '#6B7A99',
+            }
+          },
+          fontFamily: { sans: ['Noto Sans KR', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background-color: #070B14; color: #F0F4FF; font-family: 'Noto Sans KR', sans-serif; padding-bottom: 80px; }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #38BDF8 0%, #3B82F6 50%, #6366F1 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .glow-card {
+      background: #0D1526; border: 1px solid #1E2D4A;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .glow-card:hover { border-color: #3B82F6; box-shadow: 0 0 28px rgba(59,130,246,0.15); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2563EB, #3B82F6, #38BDF8);
+      color: white; font-weight: 700; border: none; cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s, filter 0.15s;
+      box-shadow: 0 4px 20px rgba(59,130,246,0.45);
+    }
+    .btn-primary:hover  { transform: translateY(-2px) scale(1.02); box-shadow: 0 8px 32px rgba(59,130,246,0.6); filter: brightness(1.1); }
+    .btn-primary:focus  { outline: none; box-shadow: 0 0 0 3px rgba(59,130,246,0.5); }
+    .btn-primary:active { transform: scale(0.98); }
+
+    .btn-kakao {
+      background: #FEE500; color: #3A1D1D; font-weight: 800; border: none; cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 16px rgba(254,229,0,0.3);
+    }
+    .btn-kakao:hover  { transform: translateY(-2px) scale(1.02); box-shadow: 0 8px 28px rgba(254,229,0,0.45); }
+    .btn-kakao:focus  { outline: none; box-shadow: 0 0 0 3px rgba(254,229,0,0.5); }
+    .btn-kakao:active { transform: scale(0.98); }
+
+    .btn-outline {
+      background: transparent; color: #3B82F6; font-weight: 700;
+      border: 2px solid #3B82F6; cursor: pointer;
+      transition: background 0.15s, transform 0.15s;
+    }
+    .btn-outline:hover  { background: rgba(59,130,246,0.1); transform: translateY(-1px); }
+    .btn-outline:focus  { outline: none; box-shadow: 0 0 0 3px rgba(59,130,246,0.4); }
+    .btn-outline:active { transform: scale(0.98); }
+
+    .badge       { background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.3); color: #60A5FA; }
+    .badge-sky   { background: rgba(56,189,248,0.1);  border: 1px solid rgba(56,189,248,0.3);  color: #38BDF8; }
+    .badge-green { background: rgba(34,197,94,0.1);   border: 1px solid rgba(34,197,94,0.3);   color: #4ADE80; }
+
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, #1E2D4A, transparent); }
+
+    .step-num { background: linear-gradient(135deg, #2563EB, #38BDF8); color: white; font-weight: 900; }
+
+    .hero-glow {
+      background: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(59,130,246,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .check-list li { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+    .check-list li::before { content: '✓'; color: #3B82F6; font-weight: 900; flex-shrink: 0; }
+
+    .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s, transform 0.6s; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    /* ─── Option cards ─── */
+    .option-card {
+      background: #0D1526; border: 1px solid #1E2D4A;
+      border-radius: 16px; padding: 20px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .option-card.featured {
+      border-color: rgba(59,130,246,0.5);
+      box-shadow: 0 0 32px rgba(59,130,246,0.1);
+    }
+    .plus-price {
+      font-size: 1.5rem; font-weight: 900; color: #3B82F6;
+    }
+
+    /* ─── Summary card ─── */
+    .summary-card {
+      background: #0D1526; border: 1px solid #1E2D4A;
+      border-radius: 20px; padding: 24px;
+      position: sticky; top: 80px;
+    }
+
+    /* ─── Bottom countdown bar ─── */
+    .countdown-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+      background: linear-gradient(90deg, #0D1A3A 0%, #0A1628 40%, #0D1A3A 100%);
+      border-top: 2px solid #3B82F6;
+      box-shadow: 0 -4px 32px rgba(59,130,246,0.25);
+      padding: 10px 16px;
+      padding-bottom: calc(10px + env(safe-area-inset-bottom));
+    }
+    .cd-box {
+      background: rgba(59,130,246,0.15);
+      border: 1px solid rgba(59,130,246,0.4);
+      border-radius: 8px; min-width: 46px;
+      font-variant-numeric: tabular-nums;
+      text-align: center; padding: 6px 8px;
+    }
+    .cd-num { font-size: 1.35rem; font-weight: 900; color: #60A5FA; line-height: 1; }
+    .cd-label { font-size: 10px; color: #93C5FD; margin-top: 2px; }
+
+    /* ─── Kakao float (desktop) ─── */
+    .kakao-float {
+      position: fixed; bottom: 80px; right: 24px; z-index: 49;
+      background: #FEE500; color: #3A1D1D;
+      border: none; border-radius: 50px;
+      padding: 12px 18px; font-weight: 800; font-size: 13px;
+      cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      display: flex; align-items: center; gap: 7px;
+      transition: transform 0.15s, box-shadow 0.15s;
+      text-decoration: none;
+    }
+    .kakao-float:hover { transform: translateY(-2px) scale(1.04); box-shadow: 0 8px 28px rgba(254,229,0,0.4); }
+    .kakao-float:active { transform: scale(0.97); }
+
+    details summary { cursor: pointer; list-style: none; }
+    details summary::-webkit-details-marker { display: none; }
+    details[open] summary .arrow { transform: rotate(180deg); }
+    .arrow { transition: transform 0.2s; display: inline-block; }
+
+    @media (max-width: 768px) {
+      .summary-card { position: static; }
+      .kakao-float { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     HEADER
+══════════════════════════════════════ -->
+<header class="sticky top-0 z-40 bg-brand-dark/90 backdrop-blur-sm border-b border-brand-border">
+  <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
+    <div class="flex items-center gap-6">
+      <span class="text-2xl font-black tracking-tight gradient-text shrink-0">HighFreedom</span>
+      <nav class="hidden sm:flex items-center gap-5">
+        <a href="https://freedomclass.liveklass.com/cu/2NUMaWYc" target="_blank" rel="noopener"
+           class="text-sm font-semibold text-brand-muted hover:text-white transition-colors">클래스</a>
+        <span class="text-blue-400 text-sm font-bold border-b-2 border-blue-400 pb-0.5">유뿌챌</span>
+      </nav>
+    </div>
+    <div class="flex items-center gap-2">
+      <a href="https://freedomclass.liveklass.com/cu/2NUMaWYc" target="_blank" rel="noopener"
+         class="hidden sm:inline text-xs font-semibold text-brand-muted hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/5">클래스 보기</a>
+      <a href="https://www.latpeed.com/products/tCOBA/pay?theme=dark" target="_blank" rel="noopener">
+        <button class="btn-primary text-sm font-bold px-5 py-2 rounded-full">지금 신청하기</button>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════
+     HERO
+══════════════════════════════════════ -->
+<section class="relative overflow-hidden pt-16 pb-20 px-4">
+  <div class="hero-glow absolute inset-0"></div>
+  <div class="max-w-4xl mx-auto text-center relative">
+    <div class="inline-flex items-center gap-2 badge rounded-full px-4 py-1.5 text-sm font-semibold mb-6">
+      <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+      선착순 모집 중 · 4월 19일 마감
+    </div>
+    <h1 class="font-black mb-5">
+      <div class="text-4xl sm:text-5xl md:text-6xl text-white mb-4">유튜브,</div>
+      <div class="text-4xl sm:text-5xl md:text-6xl gradient-text">혼자 하면 90%가 포기합니다.</div>
+    </h1>
+    <p class="text-lg text-blue-100/70 leading-relaxed mb-8 max-w-2xl mx-auto">
+      <strong class="text-white">유뿌챌</strong>은 4주 동안 함께 영상을 올리고,<br class="hidden sm:block" />
+      서로 피드백하며 실제로 성장하는 <strong class="text-white">유튜브 업로드 챌린지</strong>입니다.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-3 justify-center items-center mb-10">
+      <a href="https://www.latpeed.com/products/tCOBA/pay?theme=dark" target="_blank" rel="noopener" class="w-full sm:w-auto">
+        <button class="btn-primary w-full sm:w-auto text-lg font-black px-10 py-4 rounded-2xl">🚀 지금 바로 신청하기</button>
+      </a>
+      <a href="http://pf.kakao.com/_nxhFAX/chat" target="_blank" rel="noopener" class="w-full sm:w-auto">
+        <button class="btn-kakao w-full sm:w-auto text-base font-black px-8 py-4 rounded-2xl flex items-center justify-center gap-2">
+          💬 카카오로 문의하기
+        </button>
+      </a>
+    </div>
+    <div class="flex flex-wrap justify-center gap-6 text-center">
+      <div><p class="text-3xl font-black text-white">4주</p><p class="text-sm text-brand-muted">챌린지 기간</p></div>
+      <div class="w-px bg-brand-border"></div>
+      <div><p class="text-3xl font-black gradient-text">49,000원</p><p class="text-sm text-brand-muted">기본 참가비</p></div>
+      <div class="w-px bg-brand-border"></div>
+      <div><p class="text-3xl font-black text-white">선착순</p><p class="text-sm text-brand-muted">소수 정예 운영</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     QUOTE
+══════════════════════════════════════ -->
+<section class="py-14 px-4 fade-in">
+  <div class="max-w-2xl mx-auto text-center">
+    <p class="text-brand-muted text-sm font-semibold uppercase tracking-widest mb-5">유뿌챌의 철학</p>
+    <blockquote class="text-2xl sm:text-3xl font-black text-white leading-snug">
+      "잘하려고 멈추지 말고,<br />
+      <span class="gradient-text">일단 올리는 사람이 되어 봅시다.</span>"
+    </blockquote>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     PAIN POINTS
+══════════════════════════════════════ -->
+<section class="py-20 px-4 fade-in">
+  <div class="max-w-3xl mx-auto">
+    <p class="text-center text-brand-muted text-sm font-semibold uppercase tracking-widest mb-4">혹시 이런 경험 있으신가요?</p>
+    <h2 class="text-3xl sm:text-4xl font-black text-center mb-10">유튜브 시작만 <span class="gradient-text">세 번째</span>인 분들을 위해</h2>
+    <div class="grid gap-4">
+      <div class="glow-card rounded-2xl p-6 flex items-start gap-4">
+        <span class="text-3xl">😔</span>
+        <div>
+          <p class="font-bold text-white text-lg mb-1">"영상 한 편 올리고 멈춰버렸어요"</p>
+          <p class="text-brand-muted text-sm">계획은 있는데 막상 시작하면 미루게 되고, 결국 채널만 덩그러니 남아있죠.</p>
+        </div>
+      </div>
+      <div class="glow-card rounded-2xl p-6 flex items-start gap-4">
+        <span class="text-3xl">😤</span>
+        <div>
+          <p class="font-bold text-white text-lg mb-1">"열심히 올려도 조회수가 한 자리예요"</p>
+          <p class="text-brand-muted text-sm">시간 다 쏟아서 만들었는데 조회수 7... 뭔가 방법을 모르는 것 같아요.</p>
+        </div>
+      </div>
+      <div class="glow-card rounded-2xl p-6 flex items-start gap-4">
+        <span class="text-3xl">😩</span>
+        <div>
+          <p class="font-bold text-white text-lg mb-1">"혼자 하니까 지속이 안 됩니다"</p>
+          <p class="text-brand-muted text-sm">동기부여도 금방 사라지고, 잘하고 있는 건지 피드백도 없고, 외로워요.</p>
+        </div>
+      </div>
+    </div>
+    <p class="text-center text-xl font-bold text-white mt-10">이 모든 게 <span class="gradient-text">혼자이기 때문에</span> 생기는 문제입니다.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     WHAT IS 유뿌챌
+══════════════════════════════════════ -->
+<section class="py-20 px-4 fade-in">
+  <div class="max-w-3xl mx-auto">
+    <p class="text-center text-brand-muted text-sm font-semibold uppercase tracking-widest mb-4">챌린지란?</p>
+    <h2 class="text-3xl sm:text-4xl font-black text-center mb-4"><span class="gradient-text">강의가 아닙니다.</span><br />업로드 챌린지입니다.</h2>
+    <p class="text-center text-blue-100/70 text-lg mb-10">매주 강의를 듣는 게 아니라, 매주 직접 올리는 구조입니다.<br />올리는 사람이 되는 것, 그게 유뿌챌의 전부입니다.</p>
+
+    <!-- Mission types -->
+    <div class="grid sm:grid-cols-2 gap-5 mb-10">
+      <div class="glow-card rounded-2xl p-6 text-center">
+        <div class="text-4xl mb-3">🎬</div>
+        <p class="badge-sky inline-block text-xs font-bold px-3 py-1 rounded-full mb-3">OPTION A</p>
+        <h3 class="text-xl font-black text-white mb-1">롱폼</h3>
+        <p class="text-3xl font-black gradient-text mb-2">주 1회</p>
+        <p class="text-brand-muted text-sm">일반 유튜브 영상<br />길이 무관, 일단 올린다</p>
+      </div>
+      <div class="glow-card rounded-2xl p-6 text-center">
+        <div class="text-4xl mb-3">⚡</div>
+        <p class="badge-sky inline-block text-xs font-bold px-3 py-1 rounded-full mb-3">OPTION B</p>
+        <h3 class="text-xl font-black text-white mb-1">숏폼</h3>
+        <p class="text-3xl font-black gradient-text mb-2">주 3회</p>
+        <p class="text-brand-muted text-sm">쇼츠/릴스/틱톡<br />짧게 빠르게 자주</p>
+      </div>
+    </div>
+
+    <!-- Basic inclusions -->
+    <div class="glow-card rounded-2xl p-6">
+      <p class="text-sm font-bold text-brand-muted uppercase tracking-widest mb-4">기본 챌린지 포함 사항</p>
+      <div class="grid sm:grid-cols-2 gap-3">
+        <div class="flex items-start gap-3">
+          <span class="text-blue-400 font-black text-lg">▶</span>
+          <div>
+            <p class="font-bold text-white text-sm">개강식 (라이브 1시간)</p>
+            <p class="text-brand-muted text-xs">챌린지 시작 전 1시간 라이브로 방향 잡기</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="text-blue-400 font-black text-lg">▶</span>
+          <div>
+            <p class="font-bold text-white text-sm">종강식 (채널 리뷰)</p>
+            <p class="text-brand-muted text-xs">4주 후 전체 채널 대략 리뷰 시간</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="text-blue-400 font-black text-lg">▶</span>
+          <div>
+            <p class="font-bold text-white text-sm">단체 카톡방 입장</p>
+            <p class="text-brand-muted text-xs">결제 즉시 파일로 링크 전달</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3">
+          <span class="text-blue-400 font-black text-lg">▶</span>
+          <div>
+            <p class="font-bold text-white text-sm">함께하는 업로드 구조</p>
+            <p class="text-brand-muted text-xs">같이 올리고 서로 응원</p>
+          </div>
+        </div>
+      </div>
+      <div class="mt-4 pt-4 border-t border-brand-border">
+        <p class="text-xs text-brand-muted">* 기본 챌린지는 1:1 개인 피드백이 포함되지 않습니다.<br />  개인 피드백이 필요하신 분은 아래 추가 옵션을 선택해주세요.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     HOW IT WORKS
+══════════════════════════════════════ -->
+<section class="py-20 px-4 fade-in">
+  <div class="max-w-3xl mx-auto">
+    <p class="text-center text-brand-muted text-sm font-semibold uppercase tracking-widest mb-4">4주 진행</p>
+    <h2 class="text-3xl sm:text-4xl font-black text-center mb-12">이렇게 <span class="gradient-text">진행됩니다</span></h2>
+    <div class="space-y-5">
+      <div class="flex gap-5 items-start">
+        <div class="step-num w-12 h-12 rounded-full flex items-center justify-center text-lg font-black shrink-0">1</div>
+        <div class="glow-card rounded-2xl p-5 flex-1">
+          <p class="badge-sky inline-block text-xs font-bold px-2 py-0.5 rounded-full mb-2">개강식</p>
+          <h3 class="font-bold text-white text-lg mb-1">시작 전 라이브 (1시간)</h3>
+          <p class="text-brand-muted text-sm">채널 방향 잡기, 롱폼/숏폼 선택, 첫 업로드 계획 세우기</p>
+        </div>
+      </div>
+      <div class="flex gap-5 items-start">
+        <div class="step-num w-12 h-12 rounded-full flex items-center justify-center text-lg font-black shrink-0">2</div>
+        <div class="glow-card rounded-2xl p-5 flex-1">
+          <p class="badge-sky inline-block text-xs font-bold px-2 py-0.5 rounded-full mb-2">Week 1–4</p>
+          <h3 class="font-bold text-white text-lg mb-1">4주 업로드 챌린지</h3>
+          <p class="text-brand-muted text-sm">롱폼 주 1회 or 숏폼 주 3회. 단톡방에서 서로 인증하고 응원합니다.</p>
+        </div>
+      </div>
+      <div class="flex gap-5 items-start">
+        <div class="step-num w-12 h-12 rounded-full flex items-center justify-center text-lg font-black shrink-0">3</div>
+        <div class="glow-card rounded-2xl p-5 flex-1">
+          <p class="badge-sky inline-block text-xs font-bold px-2 py-0.5 rounded-full mb-2">종강식</p>
+          <h3 class="font-bold text-white text-lg mb-1">채널 리뷰 & 마무리</h3>
+          <p class="text-brand-muted text-sm">4주 동안의 채널을 대략적으로 봐주는 리뷰 시간. 미션 완수자 보증금 환급.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     MISSION REWARDS
+══════════════════════════════════════ -->
+<section class="py-16 px-4 fade-in">
+  <div class="max-w-3xl mx-auto">
+    <p class="text-center text-brand-muted text-sm font-semibold uppercase tracking-widest mb-4">미션 완수 시 혜택</p>
+    <h2 class="text-3xl sm:text-4xl font-black text-center mb-10">
+      끝까지 하면 <span class="gradient-text">이렇게 돌아옵니다</span>
+    </h2>
+    <div class="grid sm:grid-cols-3 gap-5">
+      <div class="glow-card rounded-2xl p-6 text-center">
+        <div class="text-4xl mb-3">💰</div>
+        <h3 class="font-bold text-white mb-2">보증금 환급</h3>
+        <p class="text-brand-muted text-sm">미션 완수 시<br />보증금 <strong class="text-white">10,000원 전액</strong> 돌려드립니다</p>
+      </div>
+      <div class="glow-card rounded-2xl p-6 text-center">
+        <div class="text-4xl mb-3">🎫</div>
+        <h3 class="font-bold text-white mb-2">오프라인 참가비 면제</h3>
+        <p class="text-brand-muted text-sm">추후 오프라인 행사 시<br />참가비 <strong class="text-white">1만원 면제</strong></p>
+      </div>
+      <div class="glow-card rounded-2xl p-6 text-center">
+        <div class="text-4xl mb-3">🎟️</div>
+        <h3 class="font-bold text-white mb-2">정규강의 할인쿠폰</h3>
+        <p class="text-brand-muted text-sm">HighFreedom<br /><strong class="text-white">정규강의 수강 할인권</strong> 증정</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     PRICING — OPTION LAYOUT
+══════════════════════════════════════ -->
+<section id="tiers" class="py-20 px-4 fade-in">
+  <div class="max-w-5xl mx-auto">
+    <p class="text-center text-brand-muted text-sm font-semibold uppercase tracking-widest mb-4">요금 안내</p>
+    <h2 class="text-3xl sm:text-4xl font-black text-center mb-3">
+      나에게 맞는 <span class="gradient-text">옵션을 선택하세요</span>
+    </h2>
+    <p class="text-center text-brand-muted mb-12">결제 페이지에서 원하는 옵션을 선택해 한 번에 결제하실 수 있습니다</p>
+
+    <div class="grid lg:grid-cols-5 gap-6 items-start">
+
+      <!-- Left: Options -->
+      <div class="lg:col-span-3 space-y-4">
+
+        <!-- Base -->
+        <div class="option-card">
+          <div class="flex items-start justify-between gap-4 mb-4">
+            <div>
+              <p class="text-xs font-bold text-brand-muted uppercase tracking-widest mb-1">기본 참가비</p>
+              <p class="text-white font-black text-2xl">49,000원</p>
+              <p class="text-brand-muted text-xs mt-1">+ 보증금 10,000원 <span class="text-green-400">→ 미션 완수 시 환급</span></p>
+            </div>
+            <div class="badge-sky text-xs font-bold px-3 py-1 rounded-full shrink-0">모든 플랜 포함</div>
+          </div>
+          <ul class="check-list text-sm text-blue-100/70 space-y-1">
+            <li>4주 업로드 챌린지 (롱폼 주1회 or 숏폼 주3회 선택)</li>
+            <li>수강생 단체 카톡방 입장 (결제 즉시 링크 전달)</li>
+            <li>개강식 라이브 1시간</li>
+            <li>종강식 채널 리뷰</li>
+            <li>미션 완수 시 보증금 환급 + 오프라인 참가비 면제 + 강의 할인권</li>
+          </ul>
+        </div>
+
+        <!-- Option A -->
+        <div class="option-card featured">
+          <div class="flex items-start justify-between gap-4 mb-4">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <p class="text-xs font-bold text-brand-muted uppercase tracking-widest">추가 옵션 A</p>
+                <span class="badge text-xs font-bold px-2 py-0.5 rounded-full">✨ 인기</span>
+              </div>
+              <p class="plus-price">+100,000원</p>
+              <p class="text-white font-black text-base mt-0.5">1개월 1:1 피드백</p>
+              <p class="text-brand-muted text-xs mt-1">기본 59,000원 + 옵션 100,000원 = <strong class="text-white">총 159,000원</strong></p>
+            </div>
+          </div>
+          <ul class="check-list text-sm text-blue-100/70 space-y-1">
+            <li>기본 참가 혜택 전부 포함</li>
+            <li>1개월간 1:1 피드백 (업로드 영상별 맞춤 코멘트)</li>
+            <li>썸네일·제목·구성 개선 제안</li>
+            <li>채널 방향 맞춤 조언</li>
+          </ul>
+        </div>
+
+        <!-- Option B -->
+        <div class="option-card" style="border-color: rgba(99,102,241,0.4); box-shadow: 0 0 28px rgba(99,102,241,0.08);">
+          <div class="flex items-start justify-between gap-4 mb-4">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <p class="text-xs font-bold text-brand-muted uppercase tracking-widest">추가 옵션 B</p>
+                <span class="text-xs font-black px-2 py-0.5 rounded-full" style="background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.4);color:#A5B4FC;">PREMIUM</span>
+              </div>
+              <p class="text-indigo-400 font-black text-2xl">+200,000원</p>
+              <p class="text-white font-black text-base mt-0.5">1:1 피드백 + 줌 컨설팅</p>
+              <p class="text-brand-muted text-xs mt-1">기본 59,000원 + 옵션 200,000원 = <strong class="text-white">총 259,000원</strong></p>
+            </div>
+          </div>
+          <ul class="check-list text-sm text-blue-100/70 space-y-1">
+            <li>기본 + 옵션 A 혜택 전부 포함</li>
+            <li>1:1 줌 컨설팅 — 채널·방향 심층 컨설팅</li>
+            <li>사업자/자유업자 브랜딩 방향 상담</li>
+            <li>HighFreedom 1:1 직접 연결</li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Right: Summary card -->
+      <div class="lg:col-span-2">
+        <div class="summary-card">
+          <div class="flex items-center gap-2 mb-1">
+            <p class="text-xs font-bold text-brand-muted uppercase tracking-widest">유뿌챌</p>
+          </div>
+          <p class="text-white font-black text-xl mb-1">유튜브 뿌시기 챌린지 · 4주</p>
+          <div class="divider my-4"></div>
+
+          <div class="mb-2">
+            <p class="text-brand-muted text-xs mb-1">기본 참가</p>
+            <p class="text-white font-black text-2xl">59,000원</p>
+            <p class="text-xs text-green-400 mt-0.5">미션 완수 시 보증금 10,000원 환급</p>
+          </div>
+
+          <div class="divider my-4"></div>
+
+          <div class="space-y-3 mb-5">
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-brand-muted">기본만</span>
+              <span class="font-bold text-white">59,000원</span>
+            </div>
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-brand-muted">+ 1:1 피드백</span>
+              <span class="font-bold text-white">159,000원</span>
+            </div>
+            <div class="flex justify-between items-center text-sm">
+              <span class="text-brand-muted">+ 피드백·줌 컨설팅</span>
+              <span class="font-bold text-white">259,000원</span>
+            </div>
+          </div>
+
+          <a href="https://www.latpeed.com/products/tCOBA/pay?theme=dark" target="_blank" rel="noopener" class="block mb-3">
+            <button class="btn-primary w-full py-4 rounded-xl font-black text-base">
+              유뿌챌 신청하기 →
+            </button>
+          </a>
+          <a href="http://pf.kakao.com/_nxhFAX/chat" target="_blank" rel="noopener" class="block">
+            <button class="btn-kakao w-full py-3.5 rounded-xl font-black text-sm flex items-center justify-center gap-2">
+              💬 카카오톡 문의
+            </button>
+          </a>
+
+          <div class="divider my-4"></div>
+          <div class="flex items-start gap-2">
+            <span class="text-blue-400 text-lg shrink-0">ℹ</span>
+            <p class="text-xs text-brand-muted leading-relaxed">
+              결제 완료 시 파일 1장이 발송됩니다.<br />파일 안에 <strong class="text-white">수강생 단톡방 링크</strong>가 포함되어 있으니 결제 후 바로 입장해주세요.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     FAQ
+══════════════════════════════════════ -->
+<section class="py-20 px-4 fade-in">
+  <div class="max-w-2xl mx-auto">
+    <h2 class="text-3xl font-black text-center mb-10">자주 묻는 <span class="gradient-text">질문</span></h2>
+    <div class="space-y-3">
+
+      <details class="glow-card rounded-2xl overflow-hidden">
+        <summary class="flex items-center justify-between p-5 font-bold text-white hover:text-blue-400 transition-colors">
+          강의가 있나요? 매주 뭔가 배우는 건가요?
+          <span class="arrow text-blue-400 text-xl ml-4">↓</span>
+        </summary>
+        <div class="px-5 pb-5 text-blue-100/70 text-sm leading-relaxed">
+          아니요. 유뿌챌은 강의 중심이 아닌 <strong class="text-white">업로드 챌린지</strong>입니다. 매주 강의를 듣는 게 아니라 직접 올리는 구조예요. 개강식(1시간 라이브)과 종강식(채널 리뷰)이 있고, 그 사이 4주는 함께 올리는 시간입니다.
+        </div>
+      </details>
+
+      <details class="glow-card rounded-2xl overflow-hidden">
+        <summary class="flex items-center justify-between p-5 font-bold text-white hover:text-blue-400 transition-colors">
+          결제하면 어떻게 되나요?
+          <span class="arrow text-blue-400 text-xl ml-4">↓</span>
+        </summary>
+        <div class="px-5 pb-5 text-blue-100/70 text-sm leading-relaxed">
+          결제 완료 즉시 파일 1장이 발송됩니다. 파일 안에 <strong class="text-white">수강생 단체 카톡방 링크</strong>가 있으니 바로 입장해주시면 됩니다. 결제 페이지에서 원하는 옵션(기본 / 1:1 피드백 / 줌 컨설팅)을 선택하시면 됩니다.
+        </div>
+      </details>
+
+      <details class="glow-card rounded-2xl overflow-hidden">
+        <summary class="flex items-center justify-between p-5 font-bold text-white hover:text-blue-400 transition-colors">
+          롱폼과 숏폼 중에 어떻게 고르나요?
+          <span class="arrow text-blue-400 text-xl ml-4">↓</span>
+        </summary>
+        <div class="px-5 pb-5 text-blue-100/70 text-sm leading-relaxed">
+          개강식 때 결정하셔도 됩니다. <strong class="text-white">롱폼은 주 1회</strong>(일반 유튜브 영상), <strong class="text-white">숏폼은 주 3회</strong>(쇼츠/릴스/틱톡)입니다. 어느 쪽이든 일단 꾸준히 올리는 것이 목표입니다.
+        </div>
+      </details>
+
+      <details class="glow-card rounded-2xl overflow-hidden">
+        <summary class="flex items-center justify-between p-5 font-bold text-white hover:text-blue-400 transition-colors">
+          보증금은 언제 어떻게 환급되나요?
+          <span class="arrow text-blue-400 text-xl ml-4">↓</span>
+        </summary>
+        <div class="px-5 pb-5 text-blue-100/70 text-sm leading-relaxed">
+          4주 미션을 완수하시면 종강식 이후 보증금 10,000원이 환급됩니다. 추가로 오프라인 참가비 1만원 면제 및 정규강의 할인쿠폰도 함께 드립니다.
+        </div>
+      </details>
+
+      <details class="glow-card rounded-2xl overflow-hidden">
+        <summary class="flex items-center justify-between p-5 font-bold text-white hover:text-blue-400 transition-colors">
+          유튜브 완전 초보도 괜찮나요?
+          <span class="arrow text-blue-400 text-xl ml-4">↓</span>
+        </summary>
+        <div class="px-5 pb-5 text-blue-100/70 text-sm leading-relaxed">
+          네! 초보를 위한 챌린지입니다. 채널 세팅부터 첫 영상 업로드까지 함께 진행합니다. 완성도보다 꾸준히 올리는 습관을 만드는 게 핵심이에요.
+        </div>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     FINAL CTA
+══════════════════════════════════════ -->
+<section class="py-24 px-4 fade-in">
+  <div class="max-w-xl mx-auto text-center">
+    <div class="badge inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-bold mb-6">
+      <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+      4월 19일 오후 11시 59분 마감
+    </div>
+    <h2 class="text-3xl sm:text-4xl font-black mb-4">
+      더 미루지 마세요.<br /><span class="gradient-text">지금 이 순간이 시작입니다.</span>
+    </h2>
+    <p class="text-blue-100/70 mb-8 text-lg">
+      유뿌챌과 함께라면 4주 후가 다릅니다.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+      <a href="https://www.latpeed.com/products/tCOBA/pay?theme=dark" target="_blank" rel="noopener">
+        <button class="btn-primary text-xl font-black px-12 py-5 rounded-2xl w-full sm:w-auto">🚀 지금 바로 신청하기</button>
+      </a>
+      <a href="http://pf.kakao.com/_nxhFAX/chat" target="_blank" rel="noopener">
+        <button class="btn-kakao text-base font-black px-8 py-5 rounded-2xl w-full sm:w-auto flex items-center justify-center gap-2">💬 카카오로 문의</button>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- P.S. -->
+<section class="pb-12 px-4">
+  <div class="max-w-xl mx-auto">
+    <div class="border border-brand-border rounded-2xl p-6">
+      <p class="text-brand-muted text-sm leading-relaxed">
+        <strong class="text-white">P.S.</strong> 잘하려고 멈추지 마세요. 유뿌챌은 잘 만든 사람보다 <strong class="text-white">꾸준히 올리는 사람</strong>을 응원합니다. 궁금한 점은 카카오 채널로 편하게 물어보세요. 🚀
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     FOOTER
+══════════════════════════════════════ -->
+<footer class="border-t border-brand-border py-8 px-4">
+  <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+    <span class="font-black text-xl gradient-text">HighFreedom</span>
+    <p class="text-brand-muted text-sm">© 2025 HighFreedom. 유뿌챌 — 유튜브 뿌시기 챌린지</p>
+  </div>
+</footer>
+
+<!-- ══════════════════════════════════════
+     BOTTOM COUNTDOWN BAR (fixed)
+══════════════════════════════════════ -->
+<div class="countdown-bar">
+  <div class="max-w-6xl mx-auto flex items-center justify-between gap-3">
+    <div class="flex items-center gap-3 min-w-0">
+      <div class="shrink-0">
+        <p class="text-blue-300 font-black text-xs uppercase tracking-wider leading-none mb-0.5">⏰ 모집 마감까지</p>
+        <p class="text-white font-bold text-xs hidden sm:block">4월 19일 오후 11:59</p>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <div class="cd-box"><p class="cd-num" id="cd-days">--</p><p class="cd-label">일</p></div>
+        <span class="text-blue-400 font-black text-lg leading-none mb-1">:</span>
+        <div class="cd-box"><p class="cd-num" id="cd-hours">--</p><p class="cd-label">시</p></div>
+        <span class="text-blue-400 font-black text-lg leading-none mb-1">:</span>
+        <div class="cd-box"><p class="cd-num" id="cd-min">--</p><p class="cd-label">분</p></div>
+        <span class="text-blue-400 font-black text-lg leading-none mb-1">:</span>
+        <div class="cd-box"><p class="cd-num" id="cd-sec">--</p><p class="cd-label">초</p></div>
+      </div>
+    </div>
+    <a href="https://www.latpeed.com/products/tCOBA/pay?theme=dark" target="_blank" rel="noopener" class="shrink-0">
+      <button class="btn-primary font-black px-5 py-2.5 rounded-xl text-sm whitespace-nowrap">신청하기 →</button>
+    </a>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     KAKAO FLOAT (desktop)
+══════════════════════════════════════ -->
+<a href="http://pf.kakao.com/_nxhFAX/chat" target="_blank" rel="noopener" class="kakao-float" aria-label="카카오 채널 문의">
+  <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M9 1C4.582 1 1 3.91 1 7.5c0 2.328 1.538 4.374 3.867 5.532L4.12 16.18a.25.25 0 0 0 .37.273L8.64 13.97c.12.008.24.03.36.03 4.418 0 8-2.91 8-6.5S13.418 1 9 1z" fill="#3A1D1D"/></svg>
+  카카오 문의
+</a>
+
+<!-- ══════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════ -->
+<script>
+  // ─── Fade-in on scroll ───
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+
+  // ─── Countdown to April 19, 2026 23:59 KST ───
+  const DEADLINE = new Date('2026-04-19T23:59:00+09:00');
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function tick() {
+    const diff = DEADLINE - new Date();
+    if (diff <= 0) {
+      ['cd-days','cd-hours','cd-min','cd-sec'].forEach(id => document.getElementById(id).textContent = '00');
+      return;
+    }
+    document.getElementById('cd-days').textContent  = pad(Math.floor(diff / 86400000));
+    document.getElementById('cd-hours').textContent = pad(Math.floor((diff % 86400000) / 3600000));
+    document.getElementById('cd-min').textContent   = pad(Math.floor((diff % 3600000) / 60000));
+    document.getElementById('cd-sec').textContent   = pad(Math.floor((diff % 60000) / 1000));
+  }
+  tick();
+  setInterval(tick, 1000);
+</script>
+
+</body>
+</html>
