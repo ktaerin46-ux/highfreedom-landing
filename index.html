@@ -152,6 +152,17 @@
     @media (max-width: 768px) {
       .summary-card { position: static; }
       .kakao-float { display: none; }
+
+      /* 모바일 섹션 여백 축소 */
+      section { padding-top: 3rem !important; padding-bottom: 3rem !important; }
+
+      /* 모바일 히어로 텍스트 */
+      .hero-h1-top    { font-size: 2.2rem !important; }
+      .hero-h1-bottom { font-size: 1.85rem !important; }
+
+      /* 모바일 카운트다운 숫자 */
+      .cd-num { font-size: 1.1rem; }
+      .cd-box { min-width: 38px; padding: 5px 6px; }
     }
   </style>
 </head>
@@ -161,22 +172,20 @@
      HEADER
 ══════════════════════════════════════ -->
 <header class="sticky top-0 z-40 bg-brand-dark/90 backdrop-blur-sm border-b border-brand-border">
-  <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
-    <div class="flex items-center gap-6">
-      <span class="text-2xl font-black tracking-tight gradient-text shrink-0">HighFreedom</span>
-      <nav class="hidden sm:flex items-center gap-5">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+    <!-- 로고 + 네비 -->
+    <div class="flex items-center gap-4">
+      <span class="text-lg sm:text-2xl font-black tracking-tight gradient-text shrink-0">HighFreedom</span>
+      <nav class="flex items-center gap-3 sm:gap-5">
         <a href="https://freedomclass.liveklass.com/cu/2NUMaWYc" target="_blank" rel="noopener"
-           class="text-sm font-semibold text-brand-muted hover:text-white transition-colors">클래스</a>
-        <span class="text-blue-400 text-sm font-bold border-b-2 border-blue-400 pb-0.5">유뿌챌</span>
+           class="text-xs sm:text-sm font-semibold text-brand-muted hover:text-white transition-colors">클래스</a>
+        <span class="text-blue-400 text-xs sm:text-sm font-bold border-b-2 border-blue-400 pb-0.5">유뿌챌</span>
       </nav>
     </div>
-    <div class="flex items-center gap-2">
-      <a href="https://freedomclass.liveklass.com/cu/2NUMaWYc" target="_blank" rel="noopener"
-         class="hidden sm:inline text-xs font-semibold text-brand-muted hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/5">클래스 보기</a>
-      <a href="https://www.latpeed.com/products/tCOBA/pay?theme=dark" target="_blank" rel="noopener">
-        <button class="btn-primary text-sm font-bold px-5 py-2 rounded-full">지금 신청하기</button>
-      </a>
-    </div>
+    <!-- 우측 버튼 -->
+    <a href="https://www.latpeed.com/products/tCOBA/pay?theme=dark" target="_blank" rel="noopener">
+      <button class="btn-primary text-xs sm:text-sm font-bold px-4 sm:px-5 py-2 rounded-full whitespace-nowrap">지금 신청하기</button>
+    </a>
   </div>
 </header>
 
