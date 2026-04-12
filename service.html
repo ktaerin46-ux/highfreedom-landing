@@ -474,18 +474,19 @@
      VIDEO SLIDER
 ══════════════════════════════════════ -->
 <section class="py-20 fade-in overflow-hidden">
-  <div class="max-w-6xl mx-auto px-4 mb-8">
+  <div class="max-w-6xl mx-auto px-4 mb-3">
     <p class="text-center text-white/40 text-sm font-semibold uppercase tracking-widest mb-3">운영 채널</p>
     <h2 class="text-2xl sm:text-4xl font-black text-center">
       말이 아닌, <span class="gradient-text">영상으로 증명합니다</span>
     </h2>
   </div>
+  <p class="text-center text-white/30 text-sm mb-8">영상을 클릭하면 유튜브에서 바로 시청할 수 있어요 👆</p>
 
-  <!-- Marquee track -->
-  <div class="relative" style="mask-image: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%); -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);">
-    <div class="video-marquee-wrap" id="videoTrack">
-      <!-- Videos injected by JS -->
-    </div>
+  <!-- 3-row marquee -->
+  <div class="space-y-4" style="mask-image: linear-gradient(90deg, transparent 0%, black 6%, black 94%, transparent 100%); -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 6%, black 94%, transparent 100%);">
+    <div class="video-marquee-wrap" id="videoTrack1"><!-- JS --></div>
+    <div class="video-marquee-wrap" id="videoTrack2" style="animation-direction: reverse; animation-duration: 38s;"><!-- JS --></div>
+    <div class="video-marquee-wrap" id="videoTrack3" style="animation-duration: 28s;"><!-- JS --></div>
   </div>
 </section>
 
@@ -681,30 +682,33 @@
   }, { threshold: 0.08 });
   document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
 
-  // Video slider
+  // Video slider — 3 rows, mixed order
   (function() {
-    const videoIds = [
-      'zvnbF9-Y_4w', 'RaQHQmAs4HI', 'ky6nqY6C5PM', 'm3Qk4hpgCis',
-      '1ebJEvYU-RE', 'SNZ8GuH_qi0', 'peC0LAuMTgU', 'jfwm1kNPjuY'
+    // 각 행마다 다른 순서로 섞어서 채널 다양하게
+    const rows = [
+      ['zvnbF9-Y_4w', 'ky6nqY6C5PM', '1ebJEvYU-RE', 'peC0LAuMTgU', 'RaQHQmAs4HI', 'jfwm1kNPjuY', 'm3Qk4hpgCis', 'SNZ8GuH_qi0'],
+      ['RaQHQmAs4HI', 'SNZ8GuH_qi0', 'jfwm1kNPjuY', 'zvnbF9-Y_4w', 'peC0LAuMTgU', 'ky6nqY6C5PM', '1ebJEvYU-RE', 'm3Qk4hpgCis'],
+      ['m3Qk4hpgCis', 'peC0LAuMTgU', 'RaQHQmAs4HI', '1ebJEvYU-RE', 'SNZ8GuH_qi0', 'zvnbF9-Y_4w', 'jfwm1kNPjuY', 'ky6nqY6C5PM'],
     ];
-    const track = document.getElementById('videoTrack');
-    if (!track) return;
 
-    // Build 2 sets for seamless loop
-    const allIds = [...videoIds, ...videoIds];
-    allIds.forEach(id => {
-      const a = document.createElement('a');
-      a.href = 'https://www.youtube.com/watch?v=' + id;
-      a.target = '_blank';
-      a.rel = 'noopener';
-      a.className = 'video-thumb';
-      const img = document.createElement('img');
-      img.src = 'https://img.youtube.com/vi/' + id + '/maxresdefault.jpg';
-      img.alt = '채널 영상';
-      img.loading = 'lazy';
-      img.onerror = function() { this.src = 'https://img.youtube.com/vi/' + id + '/hqdefault.jpg'; };
-      a.appendChild(img);
-      track.appendChild(a);
+    rows.forEach(function(ids, i) {
+      const track = document.getElementById('videoTrack' + (i + 1));
+      if (!track) return;
+      // 2 sets for seamless loop
+      [...ids, ...ids].forEach(function(id) {
+        const a = document.createElement('a');
+        a.href = 'https://www.youtube.com/watch?v=' + id;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.className = 'video-thumb';
+        const img = document.createElement('img');
+        img.src = 'https://img.youtube.com/vi/' + id + '/maxresdefault.jpg';
+        img.alt = '채널 영상';
+        img.loading = 'lazy';
+        img.onerror = function() { this.src = 'https://img.youtube.com/vi/' + id + '/hqdefault.jpg'; };
+        a.appendChild(img);
+        track.appendChild(a);
+      });
     });
   })();
 </script>
