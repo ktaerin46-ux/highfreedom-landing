@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>칼럼 | HighFreedom</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Firebase SDK (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+  <!-- Kakao SDK -->
+  <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"
+    integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4"
+    crossorigin="anonymous"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              blue:   '#3B82F6',
+              sky:    '#38BDF8',
+              indigo: '#6366F1',
+              dark:   '#070B14',
+              card:   '#0D1526',
+              border: '#1E2D4A',
+              muted:  '#6B7A99',
+            }
+          },
+          fontFamily: { sans: ['Noto Sans KR', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background-color: #070B14; color: #F0F4FF; font-family: 'Noto Sans KR', sans-serif; word-break: keep-all; overflow-wrap: break-word; }
+
+    .gradient-text { background: linear-gradient(135deg, #38BDF8 0%, #3B82F6 50%, #6366F1 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .glow-card { background: #0D1526; border: 1px solid #1E2D4A; transition: border-color 0.3s, box-shadow 0.3s; }
+    .glow-card:hover { border-color: #3B82F6; box-shadow: 0 0 28px rgba(59,130,246,0.15); }
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, #1E2D4A, transparent); }
+
+    .btn-primary { background: linear-gradient(135deg, #2563EB, #3B82F6, #38BDF8); color: white; font-weight: 700; border: none; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s, filter 0.15s; box-shadow: 0 4px 20px rgba(59,130,246,0.45); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(59,130,246,0.6); filter: brightness(1.1); }
+    .btn-kakao { background: #FEE500; color: #3A1D1D; font-weight: 800; border: none; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 4px 16px rgba(254,229,0,0.3); }
+    .btn-kakao:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(254,229,0,0.45); }
+
+    .cat-btn { background: transparent; border: 1px solid #1E2D4A; color: #6B7A99; cursor: pointer; border-radius: 999px; padding: 6px 16px; font-size: 0.875rem; font-weight: 600; transition: all 0.15s; font-family: 'Noto Sans KR', sans-serif; }
+    .cat-btn.active, .cat-btn:hover { background: rgba(59,130,246,0.12); border-color: rgba(59,130,246,0.5); color: #60A5FA; }
+
+    .article-content { white-space: pre-wrap; line-height: 2; }
+    .article-content p { margin-bottom: 1.2em; }
+
+    textarea, input, select { font-family: 'Noto Sans KR', sans-serif; }
+
+    /* Overlay 페이지 */
+    .overlay-page { position: fixed; inset: 0; background: #070B14; z-index: 60; overflow-y: auto; transform: translateY(20px); opacity: 0; transition: opacity 0.2s, transform 0.2s; pointer-events: none; }
+    .overlay-page.open { transform: translateY(0); opacity: 1; pointer-events: all; }
+
+    /* 로그인 모달 */
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 80; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+    .modal-backdrop.open { opacity: 1; pointer-events: all; }
+
+    /* 드롭다운 */
+    .nav-dropdown { position: relative; }
+    .nav-dropdown:hover .dropdown-menu { opacity: 1; pointer-events: all; transform: translateY(0); }
+    .dropdown-menu { position: absolute; top: calc(100% + 8px); left: 0; width: 128px; background: #0D1526; border: 1px solid #1E2D4A; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.4); opacity: 0; pointer-events: none; transform: translateY(4px); transition: all 0.15s; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     HEADER
+══════════════════════════════════════ -->
+<header class="sticky top-0 z-40 bg-brand-dark/90 backdrop-blur-sm border-b border-brand-border">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+    <div class="flex items-center gap-4">
+      <a href="index.html" class="text-lg sm:text-2xl font-black tracking-tight text-white shrink-0">HighFreedom</a>
+      <nav class="flex items-center gap-3 sm:gap-5">
+        <a href="https://freedomclass.liveklass.com/cu/2NUMaWYc" target="_blank" rel="noopener"
+           class="text-xs sm:text-sm font-semibold text-brand-muted hover:text-white transition-colors">클래스</a>
+        <a href="index.html" class="text-xs sm:text-sm font-semibold text-brand-muted hover:text-white transition-colors">유뿌챌</a>
+        <!-- 커뮤니티 드롭다운 (현재 활성) -->
+        <div class="nav-dropdown">
+          <button class="text-xs sm:text-sm font-semibold text-blue-400 border-b-2 border-blue-400 pb-0.5 flex items-center gap-0.5">
+            커뮤니티
+            <svg class="w-3 h-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="dropdown-menu">
+            <a href="column.html" class="flex items-center gap-2 px-4 py-3 text-sm font-bold text-blue-400 bg-blue-500/5">
+              ✍️ 칼럼
+            </a>
+          </div>
+        </div>
+        <a href="service.html" class="text-xs sm:text-sm font-semibold text-brand-muted hover:text-white transition-colors whitespace-nowrap">채널 대행</a>
+      </nav>
+    </div>
+    <!-- 우측: 로그인 상태 -->
+    <div id="auth-area">
+      <button onclick="openLoginModal()" class="btn-primary text-xs sm:text-sm font-bold px-4 py-2 rounded-full whitespace-nowrap">로그인</button>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════
+     메인: 칼럼 목록
+══════════════════════════════════════ -->
+<main class="max-w-4xl mx-auto px-4 py-12">
+
+  <!-- 페이지 타이틀 -->
+  <div class="mb-10">
+    <p class="text-brand-muted text-xs font-bold uppercase tracking-widest mb-2">HighFreedom · Community</p>
+    <h1 class="text-3xl sm:text-4xl font-black text-white mb-2">칼럼 <span class="gradient-text">아카이브</span></h1>
+    <p class="text-brand-muted text-sm">유튜브·수익화·크리에이터 성장에 관한 이야기</p>
+  </div>
+
+  <!-- 필터 + 검색 + 글쓰기 -->
+  <div class="flex flex-col sm:flex-row gap-4 mb-8 items-start sm:items-center justify-between">
+    <div class="flex flex-wrap gap-2" id="cat-filters">
+      <button class="cat-btn active" data-cat="전체" onclick="setCategory(this,'전체')">전체</button>
+      <button class="cat-btn" data-cat="유튜브전략" onclick="setCategory(this,'유튜브전략')">유튜브전략</button>
+      <button class="cat-btn" data-cat="수익화" onclick="setCategory(this,'수익화')">수익화</button>
+      <button class="cat-btn" data-cat="성장마인드" onclick="setCategory(this,'성장마인드')">성장마인드</button>
+      <button class="cat-btn" data-cat="도구·팁" onclick="setCategory(this,'도구·팁')">도구·팁</button>
+    </div>
+    <div class="flex gap-2 w-full sm:w-auto shrink-0">
+      <input id="search-input" type="text" placeholder="검색어 입력"
+        oninput="renderList()"
+        class="flex-1 sm:w-44 rounded-xl px-4 py-2 text-sm text-white outline-none focus:border-blue-500 transition-colors"
+        style="background:#0D1526;border:1px solid #1E2D4A;" />
+      <button id="btn-write" onclick="openWrite()" class="hidden btn-primary px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap">+ 글쓰기</button>
+    </div>
+  </div>
+
+  <!-- 글 목록 -->
+  <div id="article-list">
+    <div class="text-center py-20 text-brand-muted">
+      <div class="text-4xl mb-4 opacity-40">✍️</div>
+      <p class="text-sm">글을 불러오는 중...</p>
+    </div>
+  </div>
+
+</main>
+
+<!-- ══════════════════════════════════════
+     글 상세 (오버레이 페이지)
+══════════════════════════════════════ -->
+<div id="page-detail" class="overlay-page">
+  <div class="max-w-3xl mx-auto px-4 py-8">
+    <button onclick="closeDetail()" class="flex items-center gap-2 text-brand-muted hover:text-white transition-colors text-sm mb-10">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      목록으로
+    </button>
+    <div id="detail-body"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     글쓰기/수정 (오버레이 페이지)
+══════════════════════════════════════ -->
+<div id="page-write" class="overlay-page">
+  <div class="max-w-3xl mx-auto px-4 py-8">
+    <button onclick="closeWrite()" class="flex items-center gap-2 text-brand-muted hover:text-white transition-colors text-sm mb-10">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      취소
+    </button>
+    <h2 class="text-2xl font-black text-white mb-8" id="write-heading">새 칼럼 작성</h2>
+    <div class="space-y-5">
+      <div>
+        <label class="block text-xs font-bold text-brand-muted uppercase tracking-widest mb-2">카테고리</label>
+        <select id="inp-cat" class="w-full rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-blue-500 transition-colors" style="background:#0D1526;border:1px solid #1E2D4A;">
+          <option value="유튜브전략">유튜브전략</option>
+          <option value="수익화">수익화</option>
+          <option value="성장마인드">성장마인드</option>
+          <option value="도구·팁">도구·팁</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-brand-muted uppercase tracking-widest mb-2">제목</label>
+        <input id="inp-title" type="text" placeholder="칼럼 제목" class="w-full rounded-xl px-4 py-3 text-white text-lg font-bold outline-none focus:border-blue-500 transition-colors" style="background:#0D1526;border:1px solid #1E2D4A;" />
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-brand-muted uppercase tracking-widest mb-2">내용</label>
+        <textarea id="inp-content" rows="22" placeholder="내용을 자유롭게 작성하세요..." class="w-full rounded-xl px-4 py-3 text-white text-sm leading-relaxed outline-none focus:border-blue-500 transition-colors" style="background:#0D1526;border:1px solid #1E2D4A;resize:vertical;"></textarea>
+      </div>
+      <div class="flex gap-3 justify-end pt-2">
+        <button onclick="closeWrite()" class="px-6 py-3 rounded-xl text-sm font-bold text-brand-muted border border-brand-border hover:text-white transition-colors">취소</button>
+        <button onclick="submitArticle()" class="btn-primary px-8 py-3 rounded-xl font-black text-sm">발행하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     로그인 모달
+══════════════════════════════════════ -->
+<div id="modal-login" class="modal-backdrop" onclick="handleBackdropClick(event)">
+  <div class="rounded-2xl p-8 w-full max-w-xs mx-4" style="background:#0D1526;border:1px solid #1E2D4A;box-shadow:0 24px 64px rgba(0,0,0,0.6);" onclick="event.stopPropagation()">
+    <div class="text-center mb-8">
+      <p class="text-2xl font-black text-white tracking-tight">HighFreedom</p>
+      <p class="text-brand-muted text-xs mt-1">칼럼 아카이브</p>
+    </div>
+    <h3 class="text-lg font-black text-white text-center mb-1">시작하기</h3>
+    <p class="text-brand-muted text-xs text-center mb-7">소셜 계정으로 3초 만에 로그인하세요</p>
+
+    <!-- 카카오 -->
+    <button onclick="loginKakao()" class="btn-kakao w-full py-4 rounded-2xl text-sm font-black flex items-center justify-center gap-2 mb-3">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.48 3 2 6.48 2 10.8c0 2.72 1.6 5.1 4 6.6l-.8 3.6 4-2.56c.88.16 1.84.24 2.8.24 5.52 0 10-3.48 10-7.8S17.52 3 12 3z"/></svg>
+      카카오로 계속하기
+    </button>
+
+    <!-- 구글 -->
+    <button onclick="loginGoogle()" class="w-full py-4 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-colors" style="background:white;color:#1a1a1a;border:1px solid #e5e7eb;">
+      <svg width="18" height="18" viewBox="0 0 24 24">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+      </svg>
+      Google로 계속하기
+    </button>
+
+    <p class="text-xs text-brand-muted text-center mt-6 leading-relaxed">계속하면 이용약관 및 개인정보처리방침에<br />동의하는 것으로 간주됩니다</p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="border-t border-brand-border py-8 px-4 mt-16">
+  <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+    <span class="font-black text-xl text-white">HighFreedom</span>
+    <p class="text-brand-muted text-sm">© 2025 HighFreedom. All rights reserved.</p>
+  </div>
+</footer>
+
+
+<script>
+// ══════════════════════════════════════════════════════════
+//  ⚙️  설정 — 아래 값을 본인 정보로 교체하세요
+// ══════════════════════════════════════════════════════════
+
+const FIREBASE_CONFIG = {
+  apiKey:            "YOUR_API_KEY",
+  authDomain:        "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId:         "YOUR_PROJECT_ID",
+  storageBucket:     "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId:             "YOUR_APP_ID"
+};
+
+// 관리자 구글 이메일 (Google 로그인 시 글쓰기 권한 부여)
+const ADMIN_EMAIL = "your_email@gmail.com";
+
+// 카카오 JavaScript 앱 키 (Kakao Developers에서 확인)
+const KAKAO_JS_KEY = "YOUR_KAKAO_JAVASCRIPT_KEY";
+
+// 카카오 관리자 ID (카카오 로그인 후 콘솔에서 확인 가능)
+const ADMIN_KAKAO_ID = "YOUR_KAKAO_USER_ID";
+
+// ══════════════════════════════════════════════════════════
+
+// Firebase 초기화
+let db, auth;
+try {
+  firebase.initializeApp(FIREBASE_CONFIG);
+  auth = firebase.auth();
+  db   = firebase.firestore();
+} catch(e) { console.warn('Firebase 초기화 실패:', e.message); }
+
+// Kakao 초기화
+try { Kakao.init(KAKAO_JS_KEY); } catch(e) { console.warn('Kakao SDK 초기화 실패:', e.message); }
+
+// ── 상태 ──────────────────────────────────
+let currentUser  = null;  // { type, name, email, isAdmin }
+let articles     = [];
+let activeCategory = '전체';
+let editingId    = null;
+
+// ── Firebase Auth 감지 ────────────────────
+if (auth) {
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      const isAdmin = user.email === ADMIN_EMAIL;
+      currentUser = { type: 'google', uid: user.uid, name: user.displayName || user.email, email: user.email, isAdmin };
+    } else {
+      // 카카오 세션 확인
+      const kUser = safeGet('hf_kakao_user');
+      currentUser = kUser || null;
+    }
+    updateAuthUI();
+    renderList();
+  });
+} else {
+  const kUser = safeGet('hf_kakao_user');
+  currentUser = kUser || null;
+  updateAuthUI();
+}
+
+// ── 인증 UI ──────────────────────────────
+function updateAuthUI() {
+  const area = document.getElementById('auth-area');
+  const btnWrite = document.getElementById('btn-write');
+
+  if (currentUser) {
+    const initial = (currentUser.name || '유저').charAt(0);
+    area.innerHTML = `
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-black text-white shrink-0"
+             style="background:linear-gradient(135deg,#2563EB,#38BDF8);">${initial}</div>
+        <span class="text-sm text-blue-100/70 hidden sm:block max-w-[120px] truncate">${currentUser.name}</span>
+        <button onclick="logout()" class="text-xs text-brand-muted border border-brand-border px-2.5 py-1.5 rounded-lg hover:text-white hover:border-blue-500 transition-colors font-semibold">로그아웃</button>
+      </div>`;
+    if (currentUser.isAdmin) btnWrite.classList.remove('hidden');
+    else btnWrite.classList.add('hidden');
+  } else {
+    area.innerHTML = `<button onclick="openLoginModal()" class="btn-primary text-xs sm:text-sm font-bold px-4 py-2 rounded-full">로그인</button>`;
+    btnWrite.classList.add('hidden');
+  }
+}
+
+// ── 로그인 ───────────────────────────────
+async function loginGoogle() {
+  if (!auth) return alert('Firebase 설정을 먼저 완료해주세요. (FIREBASE_CONFIG)');
+  try {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    await auth.signInWithPopup(provider);
+    closeLoginModal();
+  } catch(e) { alert('Google 로그인 실패: ' + e.message); }
+}
+
+function loginKakao() {
+  try {
+    Kakao.Auth.login({
+      success(authObj) {
+        Kakao.API.request({
+          url: '/v2/user/me',
+          success(res) {
+            const isAdmin = String(res.id) === String(ADMIN_KAKAO_ID);
+            const user = {
+              type: 'kakao',
+              id: String(res.id),
+              name: res.kakao_account?.profile?.nickname || '카카오유저',
+              isAdmin
+            };
+            localStorage.setItem('hf_kakao_user', JSON.stringify(user));
+            currentUser = user;
+            updateAuthUI();
+            renderList();
+            closeLoginModal();
+          },
+          fail(err) { alert('카카오 정보 오류: ' + JSON.stringify(err)); }
+        });
+      },
+      fail(err) { alert('카카오 로그인 실패: ' + JSON.stringify(err)); }
+    });
+  } catch(e) { alert('Kakao SDK 오류: ' + e.message + '\nKAKAO_JS_KEY를 확인해주세요.'); }
+}
+
+async function logout() {
+  localStorage.removeItem('hf_kakao_user');
+  if (auth?.currentUser) await auth.signOut();
+  currentUser = null;
+  updateAuthUI();
+  renderList();
+}
+
+// ── Firestore ─────────────────────────────
+async function loadArticles() {
+  if (!db) {
+    showEmptyState('Firebase 설정이 필요합니다. column.html의 FIREBASE_CONFIG를 입력해주세요.');
+    return;
+  }
+  try {
+    const snap = await db.collection('columns').orderBy('createdAt', 'desc').get();
+    articles = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    renderList();
+  } catch(e) {
+    showEmptyState('글을 불러오지 못했습니다. Firebase 설정 및 Firestore 보안 규칙을 확인해주세요.');
+  }
+}
+
+function renderList() {
+  const q     = (document.getElementById('search-input')?.value || '').trim().toLowerCase();
+  const list  = articles.filter(a => {
+    const catOk    = activeCategory === '전체' || a.category === activeCategory;
+    const searchOk = !q || (a.title||'').toLowerCase().includes(q) || (a.content||'').toLowerCase().includes(q);
+    return catOk && searchOk;
+  });
+
+  const el = document.getElementById('article-list');
+  if (!el) return;
+
+  if (list.length === 0) {
+    el.innerHTML = `
+      <div class="text-center py-20 text-brand-muted">
+        <div class="text-4xl mb-4 opacity-30">📭</div>
+        <p class="text-sm">${q ? '검색 결과가 없습니다.' : '아직 작성된 칼럼이 없습니다.'}</p>
+      </div>`;
+    return;
+  }
+
+  el.innerHTML = list.map(a => {
+    const date    = a.createdAt?.toDate ? a.createdAt.toDate().toLocaleDateString('ko-KR', { year:'numeric', month:'long', day:'numeric' }) : '';
+    const preview = (a.content || '').replace(/\n/g,' ').slice(0, 120);
+    const adminBtns = currentUser?.isAdmin ? `
+      <div class="flex gap-1.5 shrink-0">
+        <button onclick="event.stopPropagation(); openEdit('${a.id}')" class="text-xs px-2.5 py-1 rounded-lg border border-brand-border text-brand-muted hover:text-white hover:border-blue-500 transition-colors">수정</button>
+        <button onclick="event.stopPropagation(); deleteArticle('${a.id}')" class="text-xs px-2.5 py-1 rounded-lg text-red-400/60 border border-red-900/30 hover:text-red-400 hover:border-red-500/50 transition-colors">삭제</button>
+      </div>` : '';
+    return `
+      <div class="glow-card rounded-2xl p-6 cursor-pointer" onclick="openDetail('${a.id}')">
+        <div class="flex items-start justify-between gap-4">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-2 flex-wrap">
+              <span class="text-xs font-bold px-2.5 py-0.5 rounded-full" style="background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.3);color:#60A5FA;">${a.category || ''}</span>
+              <span class="text-xs text-brand-muted">${date}</span>
+            </div>
+            <h3 class="font-black text-white text-lg mb-1.5 leading-snug">${escHtml(a.title || '제목 없음')}</h3>
+            <p class="text-brand-muted text-sm leading-relaxed line-clamp-2">${escHtml(preview)}${preview.length >= 120 ? '...' : ''}</p>
+          </div>
+          ${adminBtns}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function showEmptyState(msg) {
+  const el = document.getElementById('article-list');
+  if (el) el.innerHTML = `<div class="text-center py-20 text-brand-muted"><div class="text-4xl mb-4 opacity-30">⚙️</div><p class="text-sm">${msg}</p></div>`;
+}
+
+function setCategory(btn, cat) {
+  activeCategory = cat;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderList();
+}
+
+// ── 상세 보기 ─────────────────────────────
+function openDetail(id) {
+  const a = articles.find(x => x.id === id);
+  if (!a) return;
+  const date = a.createdAt?.toDate ? a.createdAt.toDate().toLocaleDateString('ko-KR', { year:'numeric', month:'long', day:'numeric' }) : '';
+  document.getElementById('detail-body').innerHTML = `
+    <span class="text-xs font-bold px-2.5 py-1 rounded-full" style="background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.3);color:#60A5FA;">${a.category || ''}</span>
+    <h1 class="text-3xl sm:text-4xl font-black text-white mt-5 mb-3 leading-snug">${escHtml(a.title || '')}</h1>
+    <p class="text-brand-muted text-sm mb-10">${date} · HighFreedom</p>
+    <div class="divider mb-10"></div>
+    <div class="text-blue-100/80 text-base article-content">${escHtml(a.content || '')}</div>
+    ${currentUser?.isAdmin ? `
+      <div class="flex gap-3 mt-12 pt-8 border-t border-brand-border">
+        <button onclick="closeDetail(); openEdit('${a.id}')" class="text-sm px-5 py-2.5 rounded-xl border border-brand-border text-brand-muted hover:text-white hover:border-blue-500 transition-colors font-bold">수정</button>
+        <button onclick="if(confirm('삭제하시겠습니까?')){closeDetail();deleteArticle('${a.id}');}" class="text-sm px-5 py-2.5 rounded-xl border border-red-900/30 text-red-400/70 hover:text-red-400 hover:border-red-500/50 transition-colors font-bold">삭제</button>
+      </div>` : ''}
+  `;
+  openOverlay('page-detail');
+}
+
+function closeDetail() { closeOverlay('page-detail'); }
+
+// ── 글쓰기/수정 ───────────────────────────
+function openWrite() {
+  if (!currentUser?.isAdmin) return openLoginModal();
+  editingId = null;
+  document.getElementById('write-heading').textContent = '새 칼럼 작성';
+  document.getElementById('inp-title').value   = '';
+  document.getElementById('inp-content').value = '';
+  document.getElementById('inp-cat').value     = '유튜브전략';
+  openOverlay('page-write');
+}
+
+function openEdit(id) {
+  if (!currentUser?.isAdmin) return;
+  const a = articles.find(x => x.id === id);
+  if (!a) return;
+  editingId = id;
+  document.getElementById('write-heading').textContent = '칼럼 수정';
+  document.getElementById('inp-title').value   = a.title   || '';
+  document.getElementById('inp-content').value = a.content || '';
+  document.getElementById('inp-cat').value     = a.category || '유튜브전략';
+  openOverlay('page-write');
+}
+
+function closeWrite() { closeOverlay('page-write'); }
+
+async function submitArticle() {
+  if (!currentUser?.isAdmin) return alert('권한이 없습니다.');
+  if (!db) return alert('Firebase 설정을 확인해주세요.');
+
+  const title    = document.getElementById('inp-title').value.trim();
+  const content  = document.getElementById('inp-content').value.trim();
+  const category = document.getElementById('inp-cat').value;
+  if (!title)   return alert('제목을 입력해주세요.');
+  if (!content) return alert('내용을 입력해주세요.');
+
+  const data = {
+    title, content, category,
+    author:    currentUser.name || currentUser.email || 'HighFreedom',
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
+
+  try {
+    if (editingId) {
+      await db.collection('columns').doc(editingId).update(data);
+    } else {
+      await db.collection('columns').add({ ...data, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+    }
+    closeWrite();
+    await loadArticles();
+  } catch(e) {
+    if (e.code === 'permission-denied') {
+      alert('저장 권한이 없습니다.\n\nFirebase Console → Firestore → 규칙 탭에서 아래 규칙을 설정해주세요:\n\nallow write: if request.auth != null && request.auth.token.email == "' + ADMIN_EMAIL + '";');
+    } else {
+      alert('저장 실패: ' + e.message);
+    }
+  }
+}
+
+async function deleteArticle(id) {
+  if (!currentUser?.isAdmin) return;
+  if (!confirm('정말 삭제하시겠습니까?')) return;
+  try {
+    await db.collection('columns').doc(id).delete();
+    await loadArticles();
+  } catch(e) { alert('삭제 실패: ' + e.message); }
+}
+
+// ── 로그인 모달 ───────────────────────────
+function openLoginModal() {
+  document.getElementById('modal-login').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLoginModal() {
+  document.getElementById('modal-login').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function handleBackdropClick(e) {
+  if (e.target === document.getElementById('modal-login')) closeLoginModal();
+}
+
+// ── 오버레이 헬퍼 ────────────────────────
+function openOverlay(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+  window.scrollTo(0,0);
+}
+function closeOverlay(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ESC 키로 닫기
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  closeOverlay('page-detail');
+  closeOverlay('page-write');
+  closeLoginModal();
+});
+
+// ── 유틸 ─────────────────────────────────
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+function safeGet(key) {
+  try { return JSON.parse(localStorage.getItem(key)); } catch { return null; }
+}
+
+// ── 초기 로드 ─────────────────────────────
+loadArticles();
+</script>
+
+</body>
+</html>
