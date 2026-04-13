@@ -244,70 +244,88 @@
 <section class="py-20 px-4 fade-in">
   <div class="max-w-3xl mx-auto">
     <p class="text-center text-brand-muted text-sm font-semibold uppercase tracking-widest mb-3">나에게 맞는 프로그램은?</p>
-    <h2 class="text-3xl sm:text-4xl font-black text-center mb-12">한눈에 보는<br /><span class="gradient-text">하이프리덤 수강 로드맵</span></h2>
+    <h2 class="text-3xl sm:text-4xl font-black text-center mb-2">한눈에 보는<br /><span class="gradient-text">하이프리덤 수강 로드맵</span></h2>
+    <p class="text-center text-brand-muted text-sm mb-12">아래 질문 2개로 내 단계를 확인하세요</p>
 
     <!-- Flowchart -->
-    <div class="flex flex-col items-center gap-0">
+    <div class="flex flex-col items-center">
 
-      <!-- Q1 -->
-      <div class="rounded-2xl px-6 py-4 text-center font-bold text-white text-base w-72" style="background:#1A2440;border:1px solid #2E3F60;">
-        <p class="text-xs text-brand-muted font-bold mb-1">Q1.</p>
-        유튜브를 하려는데<br />업로드를 못하고 있는가?
+      <!-- Q1 박스 -->
+      <div class="rounded-2xl px-7 py-5 text-center w-full max-w-sm" style="background:#1A2440;border:2px solid #2E3F60;">
+        <p class="text-xs font-black text-brand-muted mb-2 tracking-widest">Q1.</p>
+        <p class="font-bold text-white text-base leading-snug">유튜브를 하고 싶은데<br /><span class="text-blue-100/80">영상을 꾸준히 <strong class="text-white">업로드하지 못하고</strong> 있나요?</span></p>
+        <p class="text-xs text-brand-muted mt-2">(계획만 세우고, 미루고, 안 올리는 상태)</p>
       </div>
 
-      <!-- YES / NO branches -->
-      <div class="flex w-full max-w-2xl items-start justify-center gap-6 mt-0">
+      <!-- Q1 분기 -->
+      <div class="flex w-full max-w-2xl items-start justify-center gap-4 mt-0">
 
-        <!-- YES branch (left) -->
+        <!-- YES → 유뿌챌 -->
         <div class="flex flex-col items-center flex-1">
           <div class="flex flex-col items-center">
-            <div class="w-px h-8 bg-brand-border"></div>
-            <span class="text-xs font-black px-3 py-1 rounded-full mb-0" style="background:rgba(99,102,241,0.2);color:#A5B4FC;border:1px solid rgba(99,102,241,0.4);">YES</span>
-            <div class="w-px h-8 bg-indigo-500/40"></div>
+            <div class="w-px h-6 bg-indigo-500/50"></div>
+            <span class="text-xs font-black px-4 py-1.5 rounded-full" style="background:rgba(99,102,241,0.25);color:#C4B5FD;border:1px solid rgba(99,102,241,0.5);">✓ 네, 맞아요</span>
+            <div class="w-px h-6 bg-indigo-500/50"></div>
           </div>
-
-          <!-- 유뿌챌 card -->
-          <div class="rounded-2xl p-5 w-full text-center" style="background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(59,130,246,0.1));border:1px solid rgba(99,102,241,0.4);">
-            <p class="text-xs font-black text-indigo-400 mb-1 uppercase tracking-widest">유뿌챌 1기</p>
-            <p class="font-black text-white text-lg leading-snug mb-3">2주 스파르타 생존반</p>
-            <div class="text-left space-y-2 text-sm text-blue-100/75">
-              <p>📹 VOD 4강 즉시 제공 (평생 소장)</p>
-              <p>🎯 포인트제 미션 (목표 6pt)</p>
-              <p>📋 주간 PDF + 해설 VOD</p>
-              <p>💬 업로드 인증 단톡방</p>
-              <p>🎓 졸업식 라이브 (5/4 일)</p>
-              <p>💰 미션 달성 시 보증금 환급</p>
+          <!-- 유뿌챌 카드 -->
+          <div class="rounded-2xl p-5 w-full" style="background:linear-gradient(160deg,rgba(99,102,241,0.18),rgba(59,130,246,0.08));border:2px solid rgba(99,102,241,0.5);">
+            <!-- 타이틀 -->
+            <div class="text-center mb-4">
+              <p class="text-xs font-black text-indigo-400 tracking-widest mb-1">유튜브 뿌시기 챌린지</p>
+              <p class="font-black text-white text-xl">유뿌챌 1기</p>
+              <p class="text-indigo-300 text-sm font-bold mt-0.5">14일 업로드 챌린지</p>
+              <p class="text-xs text-blue-100/50 mt-1">업로드를 못 하고 있다면 여기서 시작하세요</p>
             </div>
-            <div class="mt-4 text-xs font-bold text-indigo-300">89,000원 + 보증금 10,000원</div>
+            <div class="divider mb-4"></div>
+            <!-- 내용 -->
+            <div class="space-y-2 text-sm text-blue-100/75">
+              <p>📹 유튜브 기초 VOD 4강 (평생 소장)</p>
+              <p>🎯 포인트제 강제 업로드 미션</p>
+              <p>📋 매주 체크리스트 PDF + 해설 VOD</p>
+              <p>💬 참가자 단톡방 (서로 인증)</p>
+              <p>🎓 졸업식 라이브 · 5/4(일)</p>
+              <p>💰 미션 달성 시 보증금 10,000원 환급</p>
+            </div>
+            <div class="mt-4 text-center">
+              <span class="text-xs font-black text-indigo-300">89,000원 + 보증금 10,000원</span>
+            </div>
           </div>
         </div>
 
-        <!-- NO arrow (right) -->
+        <!-- NO → Q2 -->
         <div class="flex flex-col items-center flex-1">
           <div class="flex flex-col items-center">
-            <div class="w-px h-8 bg-brand-border"></div>
-            <span class="text-xs font-black px-3 py-1 rounded-full mb-0" style="background:rgba(107,122,153,0.15);color:#8B9AB5;border:1px solid rgba(107,122,153,0.3);">NO</span>
-            <div class="w-px h-8 bg-brand-border/60"></div>
+            <div class="w-px h-6 bg-brand-border"></div>
+            <span class="text-xs font-black px-4 py-1.5 rounded-full" style="background:rgba(107,122,153,0.12);color:#8B9AB5;border:1px solid rgba(107,122,153,0.25);">✗ 이미 올리고 있어요</span>
+            <div class="w-px h-6 bg-brand-border"></div>
           </div>
 
-          <!-- Q2 -->
-          <div class="rounded-2xl px-6 py-4 text-center font-bold text-white text-base w-full" style="background:#1A2440;border:1px solid #2E3F60;">
-            <p class="text-xs text-brand-muted font-bold mb-1">Q2.</p>
-            성장이 정체되었거나<br />방향성이 고민되는가?
+          <!-- Q2 박스 -->
+          <div class="rounded-2xl px-5 py-4 text-center w-full" style="background:#1A2440;border:2px solid #2E3F60;">
+            <p class="text-xs font-black text-brand-muted mb-2 tracking-widest">Q2.</p>
+            <p class="font-bold text-white text-base leading-snug">채널 성장이 정체되거나<br /><span class="text-blue-100/80"><strong class="text-white">방향을 모르겠다</strong>는 느낌이 드나요?</span></p>
+            <p class="text-xs text-brand-muted mt-2">(올리는데 조회수·구독자가 안 늘거나,<br />뭘 해야 할지 막막한 상태)</p>
           </div>
+
           <div class="flex flex-col items-center">
-            <div class="w-px h-8 bg-brand-border"></div>
-            <span class="text-xs font-black px-3 py-1 rounded-full mb-0" style="background:rgba(59,130,246,0.2);color:#60A5FA;border:1px solid rgba(59,130,246,0.4);">YES</span>
-            <div class="w-px h-8 bg-blue-500/40"></div>
+            <div class="w-px h-6 bg-blue-500/50"></div>
+            <span class="text-xs font-black px-4 py-1.5 rounded-full" style="background:rgba(59,130,246,0.25);color:#93C5FD;border:1px solid rgba(59,130,246,0.5);">✓ 네, 맞아요</span>
+            <div class="w-px h-6 bg-blue-500/50"></div>
           </div>
 
           <!-- 올인원 카드 -->
-          <div class="rounded-2xl p-5 w-full text-center" style="background:linear-gradient(135deg,rgba(59,130,246,0.15),rgba(56,189,248,0.1));border:1px solid rgba(59,130,246,0.4);">
-            <p class="text-xs font-black text-blue-400 mb-1 uppercase tracking-widest">올인원 정규강의</p>
-            <p class="font-black text-white text-lg leading-snug mb-3">부업으로 월 100만원 버는<br />유튜브 A-Z 강의</p>
-            <div class="text-left space-y-2 text-sm text-blue-100/75">
+          <div class="rounded-2xl p-5 w-full" style="background:linear-gradient(160deg,rgba(59,130,246,0.18),rgba(56,189,248,0.08));border:2px solid rgba(59,130,246,0.5);">
+            <div class="text-center mb-4">
+              <p class="text-xs font-black text-blue-400 tracking-widest mb-1">하이프리덤 정규강의</p>
+              <p class="font-black text-white text-xl">올인원 패키지</p>
+              <p class="text-blue-300 text-sm font-bold mt-0.5">유튜브 A-Z 완성 강의</p>
+              <p class="text-xs text-blue-100/50 mt-1">성장을 원한다면 여기서 제대로 배우세요</p>
+            </div>
+            <div class="divider mb-4"></div>
+            <div class="space-y-2 text-sm text-blue-100/75">
               <p>🎬 기획·브랜딩·수익화 VOD 강의</p>
-              <p>📈 사업으로 연결되는 유튜브 비즈니스</p>
+              <p>💼 사업으로 연결되는 유튜브 비즈니스</p>
+              <p>💰 부업으로 월 100만원 버는 전략</p>
               <p>👥 수강생 커뮤니티</p>
             </div>
           </div>
